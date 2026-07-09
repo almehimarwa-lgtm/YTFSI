@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>نور الهدى</title>
+<meta name="description" content="تصفح سور القرآن الكريم كاملة مع التفسير الميسّر">
+<meta name="theme-color" content="#0E3B2E">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="نور الهدى">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F7F2E7;
+    --panel: #FFFDF8;
+    --ink: #24211A;
+    --ink-soft: #6b6455;
+    --accent: #0E3B2E;
+    --accent-deep: #0A2C22;
+    --gold: #B4892E;
+    --gold-soft: #E7D5A8;
+    --line: #D9CDA9;
+    --radius: 14px;
+  }
+  [data-theme="navy"]{
+    --bg:#EFF2F6; --panel:#FFFFFF; --ink:#1B2430; --ink-soft:#5B6676;
+    --accent:#16324F; --accent-deep:#0F2338; --gold:#7C8FA6; --gold-soft:#D7E0EA; --line:#D3DBE4;
+  }
+  [data-theme="maroon"]{
+    --bg:#F7EEEA; --panel:#FFFBF8; --ink:#2B1B16; --ink-soft:#7A5E52;
+    --accent:#5C1F1A; --accent-deep:#421512; --gold:#B97A45; --gold-soft:#EAD2B8; --line:#E3CFC2;
+  }
+  [data-theme="desert"]{
+    --bg:#F5F1E3; --panel:#FFFEF6; --ink:#2B2A1E; --ink-soft:#786F4E;
+    --accent:#2F6E5E; --accent-deep:#1F4E42; --gold:#C79A3B; --gold-soft:#E9DCA8; --line:#DCD3AC;
+  }
+  [data-theme="dark"]{
+    --bg:#121614; --panel:#1A211D; --ink:#EDE8DA; --ink-soft:#9CA79E;
+    --accent:#C9A227; --accent-deep:#8F7118; --gold:#C9A227; --gold-soft:#3A3324; --line:#2C3530;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Cairo', sans-serif;
+    min-height: 100vh;
+    transition: background .25s ease, color .25s ease;
+  }
+  .app{
+    display:flex;
+    flex-direction: column;
+    max-width:1320px;
+    margin:0 auto;
+  }
+
+  /* Header (was sidebar) */
+  .sidebar{
+    width: 100%;
+    background: var(--accent);
+    color: #F3EEDF;
+    padding: 20px 24px;
+    position: static;
+    transition: background .25s ease;
+  }
+  .brand{
+    text-align:center;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(231,213,168,0.25);
+  }
+  .brand .eyebrow{
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold-soft);
+    text-transform: uppercase;
+    display:block;
+    margin-bottom:6px;
+  }
+  .brand h1{
+    font-family:'Amiri Quran', serif;
+    font-size: 24px;
+    margin:0;
+    line-height:1.5;
+    color:#fff;
+  }
+  .search-box{
+    width:100%;
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(231,213,168,0.3);
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    font-family:'Cairo',sans-serif;
+    font-size: 14px;
+    outline:none;
+  }
+  .search-box::placeholder{ color: rgba(243,238,223,0.5); }
+
+  .theme-row{
+    display:flex; gap:8px; justify-content:center;
+    margin-bottom: 16px;
+  }
+  .theme-dot{
+    width: 24px; height:24px; border-radius:50%;
+    border: 2px solid rgba(255,255,255,0.35);
+    cursor:pointer;
+    padding:0;
+  }
+  .theme-dot.active{ border-color:#fff; transform: scale(1.15); }
+
+  .surah-list{
+    list-style:none;
+    margin:0; padding:0 0 6px;
+    display:flex;
+    flex-direction:row;
+    overflow-x:auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    gap: 6px;
+    max-width: 100%;
+    user-select: none;
+  }
+  .surah-list li{ flex-shrink:0; }
+  .surah-list button{
+    width: auto;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: rgba(243,238,223,0.85);
+    text-align: center;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor:pointer;
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    gap: 4px;
+    font-family:'Cairo',sans-serif;
+    transition: all .15s ease;
+    min-width: 74px;
+  }
+  .surah-list button:hover{ background: rgba(255,255,255,0.1); }
+  .surah-list button.active{
+    background: rgba(231,213,168,0.14);
+    border-color: rgba(231,213,168,0.35);
+    color: #fff;
+  }
+  .surah-list .num{
+    width: 24px; height:24px;
+    border-radius:50%;
+    border: 1px solid rgba(231,213,168,0.4);
+    display:flex;align-items:center;justify-content:center;
+    font-size: 10.5px;
+    color: var(--gold-soft);
+    flex-shrink:0;
+  }
+  .surah-list .name-ar{ font-size:14.5px; font-weight:600; }
+  .surah-list .name-meta{ font-size:10.5px; color: rgba(243,238,223,0.5); }
+
+  /* Main */
+  .main{ flex:1; padding: 34px 44px 60px; min-width:0; }
+  .toolbar{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom: 22px; flex-wrap: wrap; gap: 12px;
+  }
+  .nav-btns{ display:flex; gap:8px; }
+  .credit-label{
+    font-family:'Cairo',sans-serif;
+    font-weight:800;
+    font-size: 16px;
+    color: #0E7C4A;
+    background: rgba(14,124,74,0.08);
+    border: 1px solid rgba(14,124,74,0.25);
+    padding: 8px 18px;
+    border-radius: 999px;
+    letter-spacing: .3px;
+  }
+  .nav-btns button{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--accent);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-family:'Cairo',sans-serif;
+    font-weight:600;
+    font-size: 13px;
+    cursor:pointer;
+    display:flex; align-items:center; gap:6px;
+    transition: all .15s ease;
+  }
+  .nav-btns button:hover{ background: var(--gold-soft); }
+  .nav-btns button:disabled{ opacity:.35; cursor:not-allowed; }
+
+  .font-controls{
+    display:flex; align-items:center; gap:8px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 8px;
+  }
+  .font-controls button{
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--accent);
+    font-family:'Cairo',sans-serif;
+    font-weight:700;
+    font-size: 13px;
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+  .font-controls button:hover{ background: var(--gold-soft); }
+  .font-controls #fontLabel{
+    font-size: 12px;
+    color: var(--ink-soft);
+    min-width: 22px;
+    text-align:center;
+  }
+
+  .surah-card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 40px 38px 46px;
+    position: relative;
+    box-shadow: 0 18px 40px -22px rgba(14,59,46,0.25);
+    transition: background .25s ease, border-color .25s ease;
+  }
+  .surah-card::before{
+    content:"";
+    position:absolute; inset: 10px;
+    border: 1px solid var(--gold-soft);
+    border-radius: 10px;
+    pointer-events:none;
+  }
+  .surah-header{ text-align:center; margin-bottom: 22px; position:relative; z-index:1; }
+  .surah-header .index-label{ font-size:12px; letter-spacing:2px; color: var(--gold); text-transform:uppercase; }
+  .surah-header h2{ font-family:'Amiri Quran', serif; font-size: 40px; margin: 8px 0 6px; color: var(--accent); }
+  .badges{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+  .badge{ font-size:12px; padding: 5px 12px; border-radius: 999px; background: var(--bg); border:1px solid var(--line); color: var(--ink-soft); }
+
+  .info-grid{
+    display:grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    margin: 22px 0; position:relative; z-index:1;
+  }
+  .info-block{
+    background: var(--bg); border:1px solid var(--line); border-radius: 10px; padding: 14px 16px;
+  }
+  .info-block h4{ margin:0 0 6px; font-size:12.5px; color: var(--gold); letter-spacing:.5px; }
+  .info-block p{ margin:0; font-size:13.5px; line-height:1.9; color: var(--ink); }
+  @media (max-width: 700px){ .info-grid{ grid-template-columns:1fr; } }
+
+  .bismillah{ text-align:center; font-family:'Amiri Quran', serif; font-size: 28px; color: var(--accent); margin: 20px 0 30px; }
+  .book{
+    background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent 6%);
+    border-radius: 10px;
+    padding: 6px;
+    position: relative; z-index:1;
+  }
+  .ayat{
+    font-family:'Amiri Quran', serif;
+    font-size: var(--ayat-size, 29px);
+    line-height: 2.5;
+    text-align:center;
+    color: var(--ink);
+    column-count: 2;
+    column-gap: 46px;
+    column-rule: 1px solid var(--line);
+    transition: font-size .15s ease;
+  }
+  .ayat .state-msg{ column-span: all; }
+
+  .page-nav{
+    display:flex; align-items:center; justify-content:center; gap: 18px;
+    margin-top: 16px; position:relative; z-index:1;
+  }
+  .page-nav button{
+    width: 36px; height:36px; border-radius:50%;
+    border: 1px solid var(--gold);
+    background: var(--panel);
+    color: var(--accent);
+    font-size: 16px; font-weight:700; cursor:pointer;
+    transition: all .15s ease;
+  }
+  .page-nav button:hover{ background: var(--gold-soft); }
+  .page-nav button:disabled{ opacity:.3; cursor:not-allowed; }
+  .page-nav #pageLabel{
+    font-family:'Amiri Quran', serif;
+    font-size: 15px;
+    color: var(--ink-soft);
+    min-width: 110px;
+    text-align:center;
+  }
+  .ayah-num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width: 33px; height:33px; font-family:'Cairo',sans-serif; font-size: 13px;
+    color: var(--accent); border: 1.5px solid var(--gold); border-radius: 50%;
+    margin: 0 5px; transform: translateY(6px);
+  }
+  .state-msg{ text-align:center; color: var(--ink-soft); font-size:14px; padding: 30px 0; }
+
+  .tafsir-toggle-wrap{ text-align:center; margin-top: 30px; position:relative; z-index:1; }
+  .tafsir-toggle{
+    background: var(--accent); color: #F3EEDF; border: none; padding: 10px 22px;
+    border-radius: 999px; font-family:'Cairo',sans-serif; font-weight:600; font-size: 13.5px;
+    cursor:pointer; display:inline-flex; align-items:center; gap: 8px; transition: all .15s ease;
+  }
+  .tafsir-toggle:hover{ background: var(--accent-deep); }
+  .tafsir-toggle .chev{ transition: transform .2s ease; font-size: 11px; }
+  .tafsir-toggle.open .chev{ transform: rotate(180deg); }
+  .tafsir-box{
+    max-height: 0; overflow: hidden; transition: max-height .35s ease, opacity .3s ease, margin .3s ease;
+    opacity: 0; background: var(--bg); border: 1px solid var(--line); border-radius: 12px;
+    margin-top: 0; position: relative; z-index:1;
+  }
+  .tafsir-box.open{ max-height: 4000px; opacity: 1; margin-top: 18px; }
+  .tafsir-box h3{ font-family:'Cairo',sans-serif; font-size: 14px; color: var(--gold); letter-spacing: 1px; margin: 0; padding: 16px 22px 0; }
+  .tafsir-box p{ font-family:'Cairo',sans-serif; font-size: 14.5px; line-height: 2.1; color: var(--ink); padding: 10px 22px 20px; margin: 0; text-align: justify; white-space: pre-line; }
+
+  footer{ text-align:center; color: var(--ink-soft); font-size:12px; margin-top: 26px; }
+
+  @media (max-width: 860px){
+    .main{ padding: 22px 16px 40px; }
+    .surah-card{ padding: 26px 16px 32px; }
+    .ayat{ font-size:23px; line-height:2.3; column-count: 1; column-rule: none; }
+    .bismillah{ font-size:22px; }
+    .surah-header h2{ font-size:30px; }
+    .toolbar{ flex-direction: column; align-items: stretch; }
+    .toolbar > *{ width: 100%; }
+    .credit-label{ order: -1; text-align:center; }
+    .nav-btns{ justify-content: space-between; }
+    .nav-btns button{ flex:1; justify-content:center; padding: 10px 12px; }
+    .font-controls{ justify-content: center; }
+  }
+
+  @media (max-width: 480px){
+    body{ font-size: 15px; }
+    .sidebar{ padding: 14px 12px; }
+    .brand h1{ font-size: 19px; }
+    .brand .eyebrow{ font-size: 10px; }
+    .search-box{ padding: 10px 12px; font-size: 13px; }
+    .surah-list button{ min-width: 64px; padding: 7px 9px; }
+    .surah-list .name-ar{ font-size: 13px; }
+    .main{ padding: 16px 10px 32px; }
+    .surah-card{ padding: 20px 12px 26px; border-radius: 10px; }
+    .surah-card::before{ inset: 6px; }
+    .surah-header h2{ font-size: 24px; }
+    .badges{ gap: 6px; }
+    .badge{ font-size: 11px; padding: 4px 10px; }
+    .info-grid{ margin: 16px 0; gap: 10px; }
+    .info-block{ padding: 12px 12px; }
+    .info-block p{ font-size: 13px; line-height: 1.8; }
+    .bismillah{ font-size: 19px; margin: 16px 0 22px; }
+    .ayat{ font-size: 20px !important; line-height: 2.15; }
+    .ayah-num{ width: 28px; height: 28px; font-size: 11px; }
+    .page-nav{ gap: 12px; }
+    .page-nav button{ width: 40px; height: 40px; }
+    .page-nav #pageLabel{ font-size: 13px; min-width: 90px; }
+    .tafsir-toggle{ padding: 10px 18px; font-size: 13px; width: 100%; justify-content:center; }
+    .tafsir-box p{ font-size: 13.5px; padding: 10px 16px 18px; }
+    .credit-badge{ font-size: 12px; padding: 6px 12px; }
+    .font-controls-fixed{ padding: 4px 8px; }
+    .font-controls button, .font-controls-fixed button{ width: 30px; height: 30px; }
+    footer{ font-size: 11px; padding: 0 6px; line-height: 1.7; }
+  }
+
+  /* Prevent horizontal overflow on small screens */
+  html, body{ overflow-x: hidden; }
+  .app{ width: 100%; }
+  .credit-badge{
+    position: fixed;
+    top: 14px;
+    right: 18px;
+    z-index: 50;
+    background: var(--panel);
+    color: var(--accent);
+    border: 1px solid var(--gold);
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 0 6px 16px -6px rgba(0,0,0,0.25);
+  }
+  @media (max-width: 860px){
+    .credit-badge{ position: static; display:inline-block; margin: 0 auto 10px; }
+  }
+  .font-controls-fixed{
+    position: fixed;
+    top: 14px;
+    left: 18px;
+    z-index: 50;
+    display:flex; align-items:center; gap:8px;
+    background: var(--panel);
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    padding: 5px 10px;
+    box-shadow: 0 6px 16px -6px rgba(0,0,0,0.25);
+  }
+  @media (max-width: 860px){
+    .font-controls-fixed{ position: static; display:inline-flex; margin: 0 auto 10px; }
+  }
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb{ background: var(--gold-soft); border-radius:8px; }
+
+  /* ===================== شريط التبويبات الرئيسي ===================== */
+  nav.main-tabs{
+    position: sticky; top:0; z-index:45;
+    display:flex; justify-content:center; flex-wrap:wrap; gap:8px;
+    padding: 12px 16px;
+    background: var(--accent);
+    border-bottom: 1px solid var(--line);
+    transition: background .25s ease;
+  }
+  nav.main-tabs .tab-btn{
+    font-family:'Cairo',sans-serif; font-weight:700; font-size:13.5px;
+    color: rgba(243,238,223,0.85);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px;
+    padding: 9px 18px;
+    cursor:pointer;
+    transition: all .18s ease;
+    display:flex; align-items:center; gap:7px;
+  }
+  nav.main-tabs .tab-btn:hover{ background: rgba(255,255,255,0.14); color:#fff; }
+  nav.main-tabs .tab-btn.active{
+    background: var(--gold);
+    color: var(--accent-deep);
+    border-color: var(--gold);
+  }
+
+  .tab-page{ display:none; }
+  .tab-page.active{ display:block; }
+
+  /* ===================== السيرة / الغزوات / الأخلاق ===================== */
+  .doc-wrap{ max-width:980px; margin:0 auto; padding: 34px 24px 70px; }
+  .doc-hero{ text-align:center; margin-bottom:32px; }
+  .doc-hero .eyebrow{ font-size:12px; letter-spacing:2px; color:var(--gold); text-transform:uppercase; display:block; margin-bottom:8px; }
+  .doc-hero h2{ font-family:'Amiri Quran', serif; font-size:clamp(28px,5vw,40px); margin:0; color:var(--accent); }
+  .doc-hero p{ font-size:14.5px; color:var(--ink-soft); margin-top:10px; }
+
+  .doc-section{
+    background: var(--panel);
+    border:1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px 24px 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 12px 30px -22px rgba(14,59,46,0.25);
+  }
+  .doc-section h3{
+    font-family:'Amiri Quran', serif; color:var(--accent);
+    font-size:21px; margin:0 0 12px; display:flex; align-items:center; gap:10px;
+    border-bottom:1px dashed var(--line); padding-bottom:10px;
+  }
+  .doc-section h3 .num{
+    flex:none; width:28px;height:28px; border:1px solid var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-family:'Cairo',sans-serif; font-size:12.5px; color:var(--gold);
+  }
+  .doc-section p{ font-size:14.5px; line-height:2; color:var(--ink); margin:0 0 10px; }
+  .doc-section .quote{
+    background: var(--bg); border:1px solid var(--gold-soft); border-radius:10px;
+    padding:12px 16px; margin:12px 0; font-family:'Amiri Quran',serif; font-size:17px; color:var(--accent); text-align:center;
+  }
+
+  .ghazwa-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:16px; }
+  .ghazwa-card{ background: var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px; }
+  .ghazwa-card .gh-title{ display:flex; align-items:center; justify-content:space-between; margin-bottom:9px; }
+  .ghazwa-card .gh-name{ font-family:'Amiri Quran',serif; font-size:19px; color:var(--accent); }
+  .ghazwa-card .gh-year{ font-size:11px; color:var(--ink-soft); border:1px solid var(--line); border-radius:999px; padding:3px 10px; }
+  .ghazwa-card p{ font-size:13.5px; line-height:1.9; color:var(--ink-soft); margin:0; }
+
+  .akhlaq-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:16px; }
+  .akhlaq-card{ background: var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px; text-align:center; }
+  .akhlaq-card .ic{ font-size:26px; margin-bottom:8px; }
+  .akhlaq-card .tt{ font-family:'Amiri Quran',serif; font-size:19px; color:var(--accent); margin-bottom:8px; }
+  .akhlaq-card p{ font-size:13px; line-height:1.9; color:var(--ink-soft); margin:0; text-align:right; }
+
+  /* ===================== الاختبار ===================== */
+  .quiz-wrap{ max-width:780px; margin:0 auto; padding: 34px 24px 70px; }
+  .quiz-bar{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    background: var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:12px 18px; margin-bottom:20px; font-size:13px; color:var(--ink-soft);
+  }
+  .quiz-progress-track{ flex:1; height:7px; border-radius:999px; background:var(--bg); overflow:hidden; margin:0 14px; }
+  .quiz-progress-fill{ height:100%; background: var(--gold); width:0%; transition:width .3s ease; }
+  .quiz-score{ font-weight:700; color:var(--accent); flex:none; }
+
+  .quiz-card{ background: var(--panel); border:1px solid var(--line); border-radius: var(--radius); padding:28px 24px; box-shadow: 0 18px 40px -22px rgba(14,59,46,0.25); }
+  .quiz-q-num{ font-size:12px; color:var(--gold); font-weight:700; margin-bottom:9px; letter-spacing:.4px; }
+  .quiz-q-text{ font-family:'Amiri Quran',serif; font-size:21px; color:var(--ink); line-height:1.7; margin-bottom:20px; }
+  .quiz-options{ display:flex; flex-direction:column; gap:9px; }
+  .quiz-opt{
+    text-align:right; font-size:14.5px; color:var(--ink);
+    background: var(--bg); border:1px solid var(--line); border-radius:10px;
+    padding:12px 15px; cursor:pointer; transition:all .15s ease; display:flex; align-items:center; gap:10px;
+  }
+  .quiz-opt .letter{
+    flex:none; width:24px;height:24px; border-radius:50%; border:1px solid var(--gold);
+    display:flex; align-items:center; justify-content:center; font-size:11.5px; color:var(--accent);
+  }
+  .quiz-opt:hover{ background: var(--gold-soft); }
+  .quiz-opt.correct{ background: rgba(14,124,74,0.16); border-color:#0E7C4A; color:#0E7C4A; }
+  .quiz-opt.wrong{ background: rgba(160,60,50,0.14); border-color:#a23c32; color:#a23c32; }
+  .quiz-opt.disabled{ cursor:default; pointer-events:none; }
+  .quiz-nav{ display:flex; justify-content:space-between; align-items:center; margin-top:22px; }
+  .quiz-btn{
+    font-weight:700; font-size:13.5px; padding:10px 24px; border-radius:999px;
+    border:1px solid var(--gold); background:transparent; color:var(--accent); cursor:pointer; transition:all .18s ease; font-family:'Cairo',sans-serif;
+  }
+  .quiz-btn:hover{ background: var(--gold-soft); }
+  .quiz-btn.primary{ background: var(--accent); color:#fff; border-color:var(--accent); }
+  .quiz-btn:disabled{ opacity:.35; cursor:default; }
+  .quiz-result{ text-align:center; padding:36px 18px; }
+  .quiz-result .big-score{ font-family:'Amiri Quran',serif; font-size:48px; color:var(--accent); margin-bottom:6px; }
+  .quiz-result p{ font-size:14.5px; color:var(--ink-soft); }
+  .quiz-start{ text-align:center; padding:46px 18px; }
+  .quiz-start h3{ font-family:'Amiri Quran',serif; font-size:26px; color:var(--accent); margin-bottom:12px; }
+  .quiz-start p{ font-size:14.5px; color:var(--ink-soft); margin-bottom:22px; max-width:500px; margin-inline:auto; }
+
+  /* ===================== الأحاديث النبوية ===================== */
+  .hadith-book-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; margin-bottom:22px; }
+  .hadith-book-card{
+    background: var(--panel); border:1px solid var(--line); border-radius: var(--radius);
+    padding:22px 18px; text-align:center; cursor:pointer; transition: all .18s ease;
+    box-shadow: 0 12px 30px -22px rgba(14,59,46,0.25);
+  }
+  .hadith-book-card:hover{ border-color: var(--gold); transform: translateY(-2px); }
+  .hadith-book-card.active{ border-color: var(--accent); background: var(--gold-soft); }
+  .hadith-book-card .hb-icon{ font-size:26px; margin-bottom:8px; }
+  .hadith-book-card .hb-name{ font-family:'Amiri Quran',serif; font-size:20px; color:var(--accent); margin-bottom:6px; }
+  .hadith-book-card .hb-count{ font-size:12px; color:var(--ink-soft); }
+
+  .hadith-toolbar{
+    display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    background: var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:12px 18px; margin-bottom:18px; font-size:13px; color:var(--ink-soft);
+  }
+  .hadith-toolbar .hb-back{
+    font-weight:700; font-size:13px; padding:8px 18px; border-radius:999px;
+    border:1px solid var(--gold); background:transparent; color:var(--accent); cursor:pointer; font-family:'Cairo',sans-serif;
+  }
+  .hadith-toolbar .hb-back:hover{ background: var(--gold-soft); }
+
+  .hadith-list{ display:flex; flex-direction:column; gap:14px; }
+  .hadith-card{
+    background: var(--panel); border:1px solid var(--line); border-radius: var(--radius);
+    padding: 20px 22px; box-shadow: 0 12px 30px -22px rgba(14,59,46,0.25);
+  }
+  .hadith-card .hc-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; gap:10px; flex-wrap:wrap; }
+  .hadith-card .hc-num{
+    font-size:12px; font-weight:700; color:#fff; background: var(--accent);
+    border-radius:999px; padding:4px 14px; flex:none;
+  }
+  .hadith-card .hc-grade{ font-size:11.5px; color:var(--ink-soft); border:1px solid var(--line); border-radius:999px; padding:3px 10px; }
+  .hadith-card .hc-text{
+    font-family:'Amiri Quran', serif; font-size:18.5px; line-height:2.1; color:var(--ink); margin:0 0 14px;
+  }
+  .hadith-card .hc-foot{ display:flex; justify-content:flex-end; }
+  .hadith-card .hc-link{
+    display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700;
+    color: var(--accent); text-decoration:none; border:1px solid var(--gold); border-radius:999px;
+    padding:7px 16px; transition: all .15s ease; font-family:'Cairo',sans-serif;
+  }
+  .hadith-card .hc-link:hover{ background: var(--gold-soft); }
+
+  .hadith-loadmore-wrap{ text-align:center; margin-top:22px; }
+  .hadith-note{ font-size:12.5px; color:var(--ink-soft); text-align:center; margin-top:16px; line-height:1.9; }
+
+  @media (max-width:480px){
+    .doc-wrap, .quiz-wrap{ padding:24px 14px 50px; }
+    .doc-section{ padding:16px 16px 18px; }
+    .quiz-q-text{ font-size:18px; }
+    .hadith-card{ padding:16px 16px; }
+    .hadith-card .hc-text{ font-size:17px; }
+  }
+
+  /* ===================== مواقيت الصلاة ===================== */
+  .prayer-wrap{ max-width:900px; margin:0 auto; padding:34px 24px 70px; }
+  .prayer-loc-bar{
+    display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap;
+    background: var(--panel); border:1px solid var(--line); border-radius:999px;
+    padding:10px 18px; margin-bottom:22px; font-size:13.5px; color:var(--ink-soft);
+  }
+  .prayer-loc-bar button{
+    background: var(--accent); color:#fff; border:none; border-radius:999px;
+    padding:8px 16px; font-family:'Cairo',sans-serif; font-weight:700; font-size:12.5px; cursor:pointer;
+  }
+  .prayer-loc-bar button:hover{ background: var(--accent-deep); }
+  .prayer-loc-bar select{
+    font-family:'Cairo',sans-serif; font-size:12.5px; border:1px solid var(--line); border-radius:999px;
+    padding:6px 12px; background:var(--bg); color:var(--ink);
+  }
+  .prayer-next-card{
+    background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    color:#fff; border-radius: var(--radius); padding:26px 24px; text-align:center; margin-bottom:22px;
+    box-shadow: 0 18px 40px -22px rgba(14,59,46,0.4);
+  }
+  .prayer-next-card .lbl{ font-size:12.5px; letter-spacing:1.5px; color: var(--gold-soft); text-transform:uppercase; }
+  .prayer-next-card .name{ font-family:'Amiri Quran', serif; font-size:32px; margin:8px 0; }
+  .prayer-next-card .countdown{ font-size:22px; font-weight:700; letter-spacing:1px; direction:ltr; }
+  .prayer-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; }
+  .prayer-card{
+    background: var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px 14px; text-align:center;
+    transition: all .2s ease;
+  }
+  .prayer-card.active{ border-color:var(--gold); background: var(--gold-soft); }
+  .prayer-card .p-icon{ font-size:22px; margin-bottom:6px; }
+  .prayer-card .p-name{ font-family:'Amiri Quran', serif; font-size:17px; color:var(--accent); margin-bottom:4px; }
+  .prayer-card .p-time{ font-size:15px; font-weight:700; color:var(--ink); direction:ltr; }
+  .prayer-hijri{ text-align:center; margin-top:20px; font-size:13px; color:var(--ink-soft); }
+  .prayer-msg{ text-align:center; color:var(--ink-soft); font-size:14px; padding:30px 0; }
+  .reminder-toggle-row{
+    display:flex; align-items:center; justify-content:center; gap:10px; margin-top:22px;
+    font-size:13px; color:var(--ink-soft);
+  }
+  .switch{ position:relative; display:inline-block; width:42px; height:24px; flex:none; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .switch .slider{
+    position:absolute; cursor:pointer; inset:0; background: var(--line); border-radius:999px; transition:.2s;
+  }
+  .switch .slider::before{
+    content:""; position:absolute; height:18px; width:18px; left:3px; bottom:3px;
+    background:#fff; border-radius:50%; transition:.2s;
+  }
+  .switch input:checked + .slider{ background: var(--accent); }
+  .switch input:checked + .slider::before{ transform: translateX(-18px); }
+
+  /* ===================== المسبحة الإلكترونية ===================== */
+  .tasbih-wrap{ max-width:560px; margin:0 auto; padding:34px 24px 70px; text-align:center; }
+  .tasbih-select-row{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:22px; }
+  .tasbih-select-row select{
+    font-family:'Cairo',sans-serif; font-size:14px; font-weight:600; color:var(--ink);
+    background: var(--panel); border:1px solid var(--line); border-radius:999px; padding:10px 20px; cursor:pointer;
+  }
+  .tasbih-dhikr-text{
+    font-family:'Amiri Quran', serif; font-size:26px; color:var(--accent); margin-bottom:26px; min-height:70px;
+    display:flex; align-items:center; justify-content:center; line-height:1.6; padding:0 10px;
+  }
+  .tasbih-ring{
+    position:relative; width:230px; height:230px; margin:0 auto 26px; border-radius:50%;
+    background: var(--panel); border:10px solid var(--gold-soft);
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    cursor:pointer; user-select:none; transition: transform .08s ease, border-color .2s ease;
+    box-shadow: 0 20px 44px -22px rgba(14,59,46,0.35);
+  }
+  .tasbih-ring:active{ transform: scale(0.96); }
+  .tasbih-ring.complete{ border-color: var(--gold); }
+  .tasbih-count{ font-family:'Cairo',sans-serif; font-size:56px; font-weight:800; color:var(--accent); line-height:1; }
+  .tasbih-target{ font-size:13px; color:var(--ink-soft); margin-top:6px; }
+  .tasbih-tap-hint{ font-size:12px; color:var(--ink-soft); margin-top:6px; }
+  .tasbih-progress-track{ width:230px; height:6px; border-radius:999px; background:var(--bg); margin:0 auto 22px; overflow:hidden; border:1px solid var(--line); }
+  .tasbih-progress-fill{ height:100%; background: var(--gold); width:0%; transition: width .15s ease; }
+  .tasbih-controls{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+  .tasbih-controls button{
+    font-weight:700; font-size:13.5px; padding:10px 22px; border-radius:999px;
+    border:1px solid var(--gold); background:transparent; color:var(--accent); cursor:pointer; transition:all .18s ease; font-family:'Cairo',sans-serif;
+  }
+  .tasbih-controls button:hover{ background: var(--gold-soft); }
+  .tasbih-total-row{ font-size:13px; color:var(--ink-soft); }
+  .tasbih-total-row b{ color:var(--accent); }
+
+  /* ===================== نافذة تذكير الصلاة على النبي ===================== */
+  .salawat-overlay{
+    position:fixed; inset:0; z-index:200; background: rgba(10,20,16,0.55);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    opacity:0; pointer-events:none; transition: opacity .25s ease;
+  }
+  .salawat-overlay.show{ opacity:1; pointer-events:auto; }
+  .salawat-modal{
+    background: var(--panel); border:1px solid var(--gold); border-radius: var(--radius);
+    max-width:420px; width:100%; padding:30px 26px; text-align:center;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.4);
+    transform: translateY(10px); transition: transform .25s ease;
+  }
+  .salawat-overlay.show .salawat-modal{ transform: translateY(0); }
+  .salawat-modal .s-icon{ font-size:34px; margin-bottom:10px; }
+  .salawat-modal h3{ font-family:'Amiri Quran', serif; font-size:22px; color:var(--accent); margin:0 0 14px; }
+  .salawat-modal .s-text{ font-family:'Amiri Quran', serif; font-size:19px; color:var(--ink); line-height:1.9; margin-bottom:20px; }
+  .salawat-modal button{
+    background: var(--accent); color:#fff; border:none; padding:10px 26px; border-radius:999px;
+    font-family:'Cairo',sans-serif; font-weight:700; font-size:13.5px; cursor:pointer;
+  }
+  .salawat-modal button:hover{ background: var(--accent-deep); }
+</style>
+</head>
+<body>
+<div class="credit-badge">إعداد: مازن زياد</div>
+
+<nav class="main-tabs">
+  <button class="tab-btn active" data-tab="quran">📖 المصحف الكريم</button>
+  <button class="tab-btn" data-tab="seerah">🕌 السيرة النبوية</button>
+  <button class="tab-btn" data-tab="ghazawat">⚔️ الغزوات</button>
+  <button class="tab-btn" data-tab="akhlaq">💫 أخلاق الرسول ﷺ</button>
+  <button class="tab-btn" data-tab="hadith">📜 الأحاديث النبوية</button>
+  <button class="tab-btn" data-tab="quiz">📝 اختبر معلوماتك</button>
+  <button class="tab-btn" data-tab="prayer">🕋 مواقيت الصلاة</button>
+  <button class="tab-btn" data-tab="tasbih">📿 المسبحة الإلكترونية</button>
+</nav>
+
+<div class="tab-page active" id="tab-quran">
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="eyebrow">القرآن الكريم</span>
+      <h1>نور الهدى</h1>
+    </div>
+    <input class="search-box" id="searchBox" placeholder="ابحث عن سورة بالاسم أو الرقم...">
+    <div class="theme-row" id="themeRow"></div>
+    <ul class="surah-list" id="surahList"></ul>
+  </aside>
+
+  <main class="main">
+    <div class="toolbar">
+      <div class="credit-label" id="creditLabel">إعداد: مازن زياد</div>
+      <div class="nav-btns">
+        <button id="prevBtn">‹ السابقة</button>
+        <button id="nextBtn">التالية ›</button>
+      </div>
+      <div class="font-controls" id="pageNavFixed">
+        <button id="pagePrev" title="الصفحة السابقة">‹</button>
+        <span id="pageLabel">صفحة ١ من ١</span>
+        <button id="pageNext" title="الصفحة التالية">›</button>
+      </div>
+      <div class="font-controls">
+        <button id="fontMinus" title="تصغير الخط">A-</button>
+        <span id="fontLabel">29</span>
+        <button id="fontPlus" title="تكبير الخط">A+</button>
+      </div>
+    </div>
+
+    <section class="surah-card">
+      <div class="surah-header">
+        <span class="index-label" id="orderLabel"></span>
+        <h2 id="surahName"></h2>
+        <div class="badges">
+          <span class="badge" id="badgeType">...</span>
+          <span class="badge" id="badgeCount">...</span>
+          <span class="badge" id="badgeOrder"></span>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-block">
+          <h4>سبب التسمية</h4>
+          <p id="namingReason"></p>
+        </div>
+        <div class="info-block">
+          <h4>سياق النزول</h4>
+          <p id="revelationContext"></p>
+        </div>
+      </div>
+
+      <div class="bismillah" id="bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+      <div class="book">
+        <div class="ayat" id="ayatContainer"><div class="state-msg">جارٍ تحميل الآيات...</div></div>
+      </div>
+
+      <div class="tafsir-toggle-wrap">
+        <button id="tafsirToggle" class="tafsir-toggle">
+          <span>عرض التفسير الميسّر</span>
+          <span class="chev">▾</span>
+        </button>
+      </div>
+      <div class="tafsir-box" id="tafsirBox">
+        <h3>التفسير الميسّر</h3>
+        <p id="tafsirText">جارٍ تحميل التفسير...</p>
+      </div>
+    </section>
+
+    <footer>النص القرآني والتفسير يُجلبان مباشرة من واجهة Al Quran Cloud (نسخة المصحف العثماني وتفسير الميسّر) لضمان الدقة — سبب التسمية وسياق النزول ملخّصان لأغراض تعليمية، ويُنصح بالرجوع لكتب التفسير المعتمدة للتوسع.</footer>
+  </main>
+</div>
+</div><!-- /tab-quran -->
+
+<!-- ===================== تبويب: السيرة النبوية ===================== -->
+<div class="tab-page" id="tab-seerah">
+  <div class="doc-wrap">
+    <div class="doc-hero">
+      <span class="eyebrow">✦ نبذة موجزة ✦</span>
+      <h2>السيرة النبوية الشريفة</h2>
+      <p>محطات من حياة خير الخلق، محمد بن عبدالله ﷺ، من المولد إلى الرحيل إلى الرفيق الأعلى</p>
+    </div>
+
+    <div class="doc-section">
+      <h3><span class="num">1</span> المولد والنشأة</h3>
+      <p>وُلد النبي محمد ﷺ في مكة المكرمة عام الفيل، الموافق سنة 570م تقريبًا، من قبيلة قريش، وهو ابن عبدالله بن عبدالمطلب وآمنة بنت وهب. تُوفّي والده عبدالله قبل ولادته، فكفله جدّه عبدالمطلب، واسترضعته حليمة السعدية في بادية بني سعد كعادة أشراف قريش. توفيت والدته آمنة وهو في السادسة من عمره، ثم توفي جدّه عبدالمطلب وله من العمر ثماني سنوات، فكفله عمّه أبو طالب الذي أحاطه برعايته وحمايته.</p>
+      <p>نشأ ﷺ يتيمًا، وعُرف بين قومه بالصدق والأمانة حتى لُقّب بـ"الصادق الأمين"، وعمل في رعي الغنم ثم في التجارة، وسافر في تجارة إلى الشام وهو صغير مع عمه، ثم في تجارة خديجة رضي الله عنها.</p>
+    </div>
+
+    <div class="doc-section">
+      <h3><span class="num">2</span> الزواج من خديجة</h3>
+      <p>تزوج النبي ﷺ من السيدة خديجة بنت خويلد وعمره خمس وعشرون سنة، وكانت تكبره سنًا، وكانت تاجرة موسّرة ذات خُلق ودين. أنجبت له أبناءه جميعًا ما عدا إبراهيم، وكانت أول من آمن به من الناس، ووقفت بجانبه بمالها ونفسها في أصعب سنوات الدعوة.</p>
+    </div>
+
+    <div class="doc-section">
+      <h3><span class="num">3</span> بدء الوحي</h3>
+      <p>كان النبي ﷺ يتحنّث ويتعبّد في غار حراء قبل البعثة، وفي ليلة من ليالي شهر رمضان، وعمره أربعون سنة، نزل عليه الملَك جبريل عليه السلام بأول آيات القرآن الكريم: "اقرأ باسم ربك الذي خلق"، فكانت بداية الوحي والرسالة. رجع النبي ﷺ إلى خديجة يرتجف، فثبّتته وطمأنته، ثم ذهبا إلى ابن عمها ورقة بن نوفل الذي بشّره بأنه نبي هذه الأمة.</p>
+      <div class="quote">اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ</div>
+    </div>
+
+    <div class="doc-section">
+      <h3><span class="num">4</span> الدعوة السرية ثم الجهرية في مكة</h3>
+      <p>بدأت الدعوة سرًا لثلاث سنوات، فأسلم خديجة وأبو بكر الصديق وعلي بن أبي طالب وزيد بن حارثة وجمع من الصحابة. ثم أُمر النبي ﷺ بالجهر بالدعوة، فواجه أذى قريش الشديد وصدّهم واستهزاءهم، وتعرّض المستضعفون من أصحابه لتعذيب شديد كما حدث مع ياسر وسمية وابنهما عمار رضي الله عنهم.</p>
+      <p>أمر النبي ﷺ بعض أصحابه بالهجرة إلى الحبشة فرارًا بدينهم من الاضطهاد، حيث آواهم النجاشي ملك الحبشة وأحسن ضيافتهم.</p>
+    </div>
+
+    <div class="doc-section">
+      <h3><span class="num">5</span> عام الحزن والإسراء والمعراج</h3>
+      <p>سُمّي العام العاشر من البعثة بـ"عام الحزن" لوفاة عمّه أبي طالب الذي كان يحميه، ووفاة زوجته خديجة رضي الله عنها التي كانت سنده الأول. بعد ذلك بقليل، أُسري بالنبي ﷺ ليلًا من المسجد الحرام إلى المسجد الأقصى، ثم عُرج به إلى السماوات العلى، وفُرضت عليه الصلوات الخمس في تلك الليلة.</p>
+    </div>
+
+    <div class="doc-section">
+      <h3><span class="num">6</span> بيعتا العقبة والهجرة إلى المدينة</h3>
+      <p>التقى النبي ﷺ بنفر من أهل يثرب (المدينة) في موسم الحج، فأسلموا وبايعوه بيعة العقبة الأولى ثم الثانية، ووعدوه بنصرته وحمايته. لما اشتد أذى قريش، أذن الله للمسلمين بالهجرة إلى المدينة، فهاجر النبي ﷺ برفقة أبي بكر الصديق سنة 622م، وهو الحدث الذي جعله المسلمون بداية التقويم الهجري.</p>
+    </div>
+
+    <div class="doc-section">
+      <h3><span class="num">7</span> بناء الدولة في المدينة</h3>
+      <p>بعد وصوله إلى المدينة، بنى النبي ﷺ المسجد النبوي، وآخى بين المهاجرين والأنصار، وكتب وثيقة المدينة التي نظّمت العلاقة بين المسلمين واليهود وسائر سكان المدينة. توالت بعد ذلك الغزوات والفتوحات التي رسّخت دولة الإسلام الناشئة (انظر تبويب الغزوات).</p>
+    </div>
+
+    <div class="doc-section">
+      <h3><span class="num">8</span> فتح مكة وحجة الوداع</h3>
+      <p>في السنة الثامنة للهجرة فتح المسلمون مكة المكرمة فتحًا سلميًا كبيرًا، فدخل الناس في دين الله أفواجًا، وعفا النبي ﷺ عن أهل مكة الذين آذوه وقال لهم: "اذهبوا فأنتم الطلقاء". وفي السنة العاشرة أدّى حجة الوداع وخطب خطبته المشهورة التي أرسى فيها مبادئ العدل والمساواة وحقوق الإنسان.</p>
+    </div>
+
+    <div class="doc-section">
+      <h3><span class="num">9</span> الوفاة</h3>
+      <p>تُوفي النبي محمد ﷺ في المدينة المنورة يوم الاثنين 12 ربيع الأول سنة 11 هـ (632م)، عن عمر ثلاث وستين سنة، ودُفن في حجرة زوجته عائشة رضي الله عنها، وهو المكان الذي يضم اليوم الحجرة النبوية الشريفة داخل المسجد النبوي.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== تبويب: الغزوات ===================== -->
+<div class="tab-page" id="tab-ghazawat">
+  <div class="doc-wrap">
+    <div class="doc-hero">
+      <span class="eyebrow">✦ محطات جهاد ✦</span>
+      <h2>الغزوات والسرايا</h2>
+      <p>أبرز الغزوات التي خاضها النبي ﷺ وأصحابه دفاعًا عن الدين الناشئ في المدينة</p>
+    </div>
+
+    <div class="ghazwa-grid" id="ghazwaGrid"></div>
+
+    <div class="doc-section" style="margin-top:18px;">
+      <h3><span class="num">ℹ</span> ملاحظة</h3>
+      <p>الغزوة هي كل معركة أو خروج للقتال شارك فيه النبي ﷺ بنفسه، أما السرية فهي التي يبعث فيها جيشًا دون أن يخرج معه بنفسه. بلغ عدد غزوات النبي ﷺ نحو سبع وعشرين غزوة، خاض القتال الفعلي في تسع منها.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== تبويب: أخلاق الرسول ===================== -->
+<div class="tab-page" id="tab-akhlaq">
+  <div class="doc-wrap">
+    <div class="doc-hero">
+      <span class="eyebrow">✦ وَإِنَّكَ لَعَلَىٰ خُلُقٍ عَظِيمٍ ✦</span>
+      <h2>أخلاق الرسول ﷺ</h2>
+      <p>لمحات من شمائل النبي محمد ﷺ التي وصفه بها القرآن الكريم ورواها الصحابة الكرام</p>
+    </div>
+
+    <div class="akhlaq-grid" id="akhlaqGrid"></div>
+  </div>
+</div>
+
+<!-- ===================== تبويب: الأحاديث النبوية ===================== -->
+<div class="tab-page" id="tab-hadith">
+  <div class="doc-wrap">
+    <div class="doc-hero">
+      <span class="eyebrow">✦ من كنوز السنة ✦</span>
+      <h2>الأحاديث النبوية الشريفة</h2>
+      <p>مختارات من صحيح البخاري وصحيح مسلم، بالنص العربي الأصلي، مع رابط مباشر لمصدر الشرح الخارجي (سُنة.كوم) لكل حديث</p>
+    </div>
+
+    <div id="hadithBookSelect" class="hadith-book-grid"></div>
+    <div id="hadithReader" style="display:none;">
+      <div class="hadith-toolbar">
+        <button class="hb-back" id="hadithBackBtn">‹ رجوع لاختيار الكتاب</button>
+        <span id="hadithBookLabel"></span>
+      </div>
+      <div class="hadith-list" id="hadithList"></div>
+      <div class="hadith-loadmore-wrap">
+        <button class="quiz-btn primary" id="hadithLoadMoreBtn">تحميل المزيد من الأحاديث</button>
+      </div>
+    </div>
+    <p class="hadith-note">النص العربي يُجلب مباشرة من قاعدة بيانات hadith-api المفتوحة لضمان دقة المتن. لعرض الشرح التفصيلي ومعاني الكلمات ودرجة الحديث بالتفصيل، اضغط رابط «الشرح والمصدر ↗» أسفل كل حديث للانتقال إلى موقع سُنة.كوم المتخصص.</p>
+  </div>
+</div>
+
+<!-- ===================== تبويب: الاختبار ===================== -->
+<div class="tab-page" id="tab-quiz">
+  <div class="quiz-wrap" id="quizWrap"></div>
+</div>
+
+<!-- ===================== تبويب: مواقيت الصلاة ===================== -->
+<div class="tab-page" id="tab-prayer">
+  <div class="prayer-wrap">
+    <div class="doc-hero">
+      <span class="eyebrow">✦ حافظوا على الصلوات ✦</span>
+      <h2>مواقيت الصلاة</h2>
+      <p>مواقيت الصلوات الخمس حسب موقعك الحالي</p>
+    </div>
+
+    <div class="prayer-loc-bar" id="prayerLocBar">
+      <span id="prayerLocLabel">📍 يتم تحديد موقعك تلقائيًا...</span>
+      <button id="prayerLocateBtn">تحديد الموقع</button>
+      <select id="prayerMethod" title="طريقة الحساب">
+        <option value="4">أم القرى (مكة المكرمة)</option>
+        <option value="5">الهيئة المصرية العامة للمساحة</option>
+        <option value="3">رابطة العالم الإسلامي</option>
+        <option value="2">ISNA (أمريكا الشمالية)</option>
+        <option value="1">جامعة العلوم الإسلامية، كراتشي</option>
+      </select>
+    </div>
+
+    <div id="prayerContent">
+      <div class="prayer-msg">جارٍ تحميل مواقيت الصلاة...</div>
+    </div>
+
+    <div class="reminder-toggle-row">
+      <label class="switch">
+        <input type="checkbox" id="salawatReminderToggle">
+        <span class="slider"></span>
+      </label>
+      <span>تفعيل تذكير "اللهم صل على النبي ﷺ" كل نصف ساعة</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== تبويب: المسبحة الإلكترونية ===================== -->
+<div class="tab-page" id="tab-tasbih">
+  <div class="tasbih-wrap">
+    <div class="doc-hero">
+      <span class="eyebrow">✦ وَاذْكُرْ رَبَّكَ كَثِيرًا ✦</span>
+      <h2>المسبحة الإلكترونية</h2>
+      <p>سبّح واذكر الله، وصلِّ على النبي ﷺ بعدّاد رقمي بسيط</p>
+    </div>
+
+    <div class="tasbih-select-row">
+      <select id="tasbihDhikrSelect">
+        <option value="0">سُبْحَانَ اللَّهِ</option>
+        <option value="1">الْحَمْدُ لِلَّهِ</option>
+        <option value="2">اللَّهُ أَكْبَرُ</option>
+        <option value="3">لَا إِلَٰهَ إِلَّا اللَّهُ</option>
+        <option value="4">اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ</option>
+        <option value="5">أَسْتَغْفِرُ اللَّهَ</option>
+        <option value="6">سُبْحَانَ اللَّهِ وَبِحَمْدِهِ سُبْحَانَ اللَّهِ الْعَظِيمِ</option>
+        <option value="7">لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ</option>
+      </select>
+      <select id="tasbihTargetSelect">
+        <option value="33">33</option>
+        <option value="99" selected>99</option>
+        <option value="100">100</option>
+        <option value="1000">1000</option>
+        <option value="0">بلا حد</option>
+      </select>
+    </div>
+
+    <div class="tasbih-dhikr-text" id="tasbihDhikrText">سُبْحَانَ اللَّهِ</div>
+
+    <div class="tasbih-progress-track"><div class="tasbih-progress-fill" id="tasbihProgressFill"></div></div>
+
+    <div class="tasbih-ring" id="tasbihRing">
+      <div class="tasbih-count" id="tasbihCount">0</div>
+      <div class="tasbih-target" id="tasbihTargetLabel">الهدف: 99</div>
+      <div class="tasbih-tap-hint">اضغط للعدّ</div>
+    </div>
+
+    <div class="tasbih-controls">
+      <button id="tasbihResetBtn">تصفير العدّاد</button>
+      <button id="tasbihUndoBtn">تراجع</button>
+    </div>
+
+    <div class="tasbih-total-row">إجمالي التسبيحات منذ البداية: <b id="tasbihGrandTotal">0</b></div>
+  </div>
+</div>
+
+<!-- ===================== نافذة تذكير الصلاة على النبي ﷺ ===================== -->
+<div class="salawat-overlay" id="salawatOverlay">
+  <div class="salawat-modal">
+    <div class="s-icon">💫</div>
+    <h3>تذكير بالصلاة على النبي ﷺ</h3>
+    <div class="s-text" id="salawatModalText">اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ</div>
+    <button id="salawatCloseBtn">آمين، جزاك الله خيرًا</button>
+  </div>
+</div>
+
+<script>
+// ---- Editorial data: naming reason + revelation context per surah (114 entries) ----
+const info = {
+1:["الافتتاح؛ لأنها تفتتح بها القراءة في المصحف والصلاة، وتُعرف أيضًا بأم الكتاب والسبع المثاني.","من أوائل ما نزل، وهي أساس الصلاة إذ لا تصح إلا بها."],
+2:["نسبة لقصة البقرة التي أمر الله بني إسرائيل بذبحها فيها.","أطول سورة في القرآن، نزل معظمها في السنوات الأولى بعد الهجرة إلى المدينة."],
+3:["نسبة لذكر قصة آل عمران، والد مريم عليها السلام، وقصة ولادتها ونذر أمها.","نزلت مطولاً بمناسبة وفد نصارى نجران وما تلاها من أحداث غزوة أحد."],
+4:["لكثرة الأحكام المتعلقة بالنساء فيها، كالزواج والميراث وحقوقهن.","مدنية، عالجت قضايا اجتماعية وأسرية بعد استقرار الدولة الإسلامية في المدينة."],
+5:["نسبة لقصة نزول المائدة من السماء على الحواريين استجابة لدعاء عيسى عليه السلام.","من آخر ما نزل من القرآن، وفيها استكمال للتشريعات."],
+6:["لكثرة الحديث فيها عن الأنعام وما ابتدعه المشركون من أحكام باطلة فيها.","مكية، وقد نزلت جملة واحدة كما ورد عن جمع من المفسرين."],
+7:["نسبة لذكر 'الأعراف'، وهو موضع مرتفع بين الجنة والنار يوم القيامة.","مكية، تناولت قصص الأنبياء مع أقوامهم بشكل مفصل."],
+8:["لحديثها عن أحكام الأنفال (الغنائم) بعد غزوة بدر الكبرى.","نزلت عقب غزوة بدر لتنظيم قسمة الغنائم وبيان أسباب النصر."],
+9:["لحديثها عن توبة الله على المؤمنين والمتخلفين عن غزوة تبوك.","السورة الوحيدة التي لم تُفتتح بالبسملة؛ نزلت في أواخر العهد المدني."],
+10:["نسبة لذكر قصة نبي الله يونس عليه السلام وقومه الذين آمنوا فنجوا من العذاب.","مكية، تتناول قضايا التوحيد والرد على المشركين."],
+11:["نسبة لقصة نبي الله هود عليه السلام مع قومه عاد.","مكية، وصفها النبي صلى الله عليه وسلم بأنها من السور التي شيّبته لما فيها من أهوال."],
+12:["قصة نبي الله يوسف عليه السلام كاملة من بدايتها إلى نهايتها، وتُعرف بأحسن القصص.","مكية، نزلت تسلية للنبي صلى الله عليه وسلم في عام الحزن."],
+13:["لذكر الرعد الذي يسبح بحمد الله فيها.","اختُلف في كونها مكية أو مدنية، وتتناول عظمة خلق الله في الكون."],
+14:["نسبة لدعاء نبي الله إبراهيم عليه السلام المذكور فيها لذريته وأهل مكة.","مكية، تعرض دعوات الأنبياء وموقف أقوامهم منهم."],
+15:["نسبة لديار ثمود المعروفة بالحِجر، الواقعة بين المدينة والشام.","مكية، تتحدث عن تكذيب الأمم السابقة للرسل."],
+16:["لذكر نعمة النحل وما أوحى الله له من بناء البيوت وصنع العسل، وتُسمى أيضًا سورة النِّعم.","مكية، تعدد نعم الله على خلقه كدليل على وحدانيته."],
+17:["لحديثها عن رحلة الإسراء بالنبي صلى الله عليه وسلم من مكة إلى بيت المقدس، وتُعرف أيضًا ببني إسرائيل.","مكية، نزلت في أعقاب حادثة الإسراء والمعراج."],
+18:["نسبة لقصة أصحاب الكهف الذين فرّوا بدينهم من قومهم فآواهم الله في كهف.","مكية، وردت فضائل عظيمة في قراءتها يوم الجمعة."],
+19:["لذكر قصة مريم عليها السلام وولادتها لعيسى عليه السلام بأمر الله.","مكية، نزلت زمن هجرة بعض الصحابة إلى الحبشة."],
+20:["من الحروف المقطّعة التي افتُتحت بها السورة.","مكية، فيها قصة موسى عليه السلام مع فرعون بشكل مفصل."],
+21:["لذكر قصص عدد من الأنبياء عليهم السلام وردهم على أقوامهم.","مكية، تؤكد وحدة الرسالة عبر الأنبياء جميعًا."],
+22:["لحديثها عن فريضة الحج ومناسكه وفضله.","تضم آيات مكية وأخرى مدنية بحسب أكثر أقوال المفسرين."],
+23:["لذكر صفات المؤمنين الفائزين في مطلع السورة.","مكية، تبدأ بالبشارة بالفلاح لمن اتصف بصفات الإيمان الحق."],
+24:["لذكر آية النور العظيمة، وتضمنت أحكام الحجاب والعفة وحادثة الإفك.","مدنية، نزلت عقب حادثة الإفك التي مست بيت النبي صلى الله عليه وسلم."],
+25:["من أسماء القرآن الكريم، لأنه يفرّق بين الحق والباطل.","مكية، ترد على شبهات المشركين حول القرآن والنبوة."],
+26:["لذكر حال الشعراء وصفتهم في ختام السورة، تمييزًا للقرآن عن الشعر.","مكية، تسرد قصص عدد من الأنبياء مع أقوامهم."],
+27:["نسبة لقصة النملة التي حذّرت جنودها من جيش سليمان عليه السلام.","مكية، فيها قصة سليمان مع الهدهد وملكة سبأ."],
+28:["لتفصيلها قصة موسى عليه السلام منذ ولادته إلى نبوته.","مكية، نزلت تثبيتًا للنبي صلى الله عليه وسلم في مواجهة أذى قومه."],
+29:["لضرب المثل بالعنكبوت وبيتها الواهي لمن اتخذ أولياء من دون الله.","مكية، تتحدث عن الابتلاء وثبات المؤمنين عليه."],
+30:["لذكر غلبة الفرس للروم ثم انتصار الروم بعد ذلك كما أخبر القرآن.","مكية، نزلت في وقت كانت فيه بشارة بانتصار الروم موضع رهان بين المسلمين والمشركين."],
+31:["لذكر وصايا الحكيم لقمان لابنه في التوحيد والأخلاق.","مكية، تبرز الحكمة العملية في التربية الإيمانية."],
+32:["لذكر آية السجدة التي يُستحب السجود عندها.","مكية، تتحدث عن خلق الإنسان والبعث."],
+33:["لحديثها عن غزوة الأحزاب (الخندق) التي تحزّبت فيها القبائل ضد المسلمين.","مدنية، عالجت أحداث الغزوة وبعض الأحكام الأسرية."],
+34:["نسبة لقصة قوم سبأ في اليمن ونعمتهم العظيمة ثم زوالها بكفرهم.","مكية، تحذر من الاغترار بالنعم دون شكر."],
+35:["من أسماء الله الحسنى (فاطر السماوات والأرض)، وتُسمى أيضًا سورة الملائكة.","مكية، تتحدث عن قدرة الله في الخلق ورسالة الملائكة."],
+36:["من الحروف المقطّعة، وتُلقّب بـ'قلب القرآن' لما ورد في فضلها.","مكية، تؤكد على البعث والرسالة بأسلوب مؤثر."],
+37:["نسبة للملائكة الصافّات أجنحتها في عبادة الله وتسبيحه.","مكية، فيها قصص عدة أنبياء منهم إبراهيم وإسماعيل ويونس عليهم السلام."],
+38:["من الحروف المقطّعة التي افتُتحت بها السورة.","مكية، تتناول قصة داود وسليمان عليهما السلام وابتلاء الأنبياء."],
+39:["لذكر دخول الناس الجنة والنار جماعات (زُمَرًا) يوم القيامة.","مكية، تدعو للإخلاص التام في العبادة."],
+40:["من أسماء الله الحسنى (غافر الذنب)، وتُسمى أيضًا سورة المؤمن لذكر قصة مؤمن آل فرعون.","مكية، تتحدث عن جدال فرعون مع موسى عليه السلام."],
+41:["لأن آياتها فُصّلت وبُيّنت بالحجج والبراهين، وتُسمى أيضًا سورة السجدة.","مكية، ترد على شبهات المشركين حول القرآن."],
+42:["لحث المسلمين على مبدأ الشورى في تدبير أمورهم.","مكية، تؤسس لمبدأ التشاور كقيمة إسلامية أصيلة."],
+43:["لذكر زخرف الدنيا (زينتها الزائلة) الذي لا يدل على رضا الله عن أهله.","مكية، ترد على من فضّل الغنى الدنيوي على الهداية."],
+44:["لذكر الدخان الذي يُعد من علامات العذاب أو من أشراط الساعة.","مكية، نزلت في سياق التحذير من عناد قريش."],
+45:["لذكر جثوّ الأمم كلها على ركبها من هول يوم القيامة.","مكية، تتحدث عن آيات الله الكونية الدالة على وحدانيته."],
+46:["نسبة لمساكن قوم عاد الرملية (الأحقاف) الواقعة باليمن.","مكية، فيها قصة هود عليه السلام مع قومه وذكر إيمان بعض الجن بالقرآن."],
+47:["سُميت باسم النبي محمد صلى الله عليه وسلم المذكور فيها صراحة، وتُسمى أيضًا سورة القتال.","مدنية، نزلت في سياق الحديث عن أحكام القتال والجهاد."],
+48:["بشارة بفتح مبين قريب، نزلت عقب صلح الحديبية.","مدنية، نزلت في طريق العودة من الحديبية بشارةً للمسلمين."],
+49:["لذكر آداب مخاطبة النبي صلى الله عليه وسلم في حجراته وعدم رفع الصوت عنده.","مدنية، تؤسس لآداب اجتماعية رفيعة بين المسلمين."],
+50:["من الحروف المقطّعة التي افتُتحت بها السورة.","مكية، تتحدث عن البعث وقدرة الله على الإحياء بعد الموت."],
+51:["نسبة للرياح الذاريات التي تثير التراب وتذروه.","مكية، تؤكد صدق وعد الله بالبعث والجزاء."],
+52:["نسبة لجبل الطور الذي كلّم الله عليه موسى عليه السلام.","مكية، تصف نعيم أهل الجنة وعذاب المكذبين."],
+53:["قسم بالنجم إذا هوى (غاب أو سقط)، وتصف حادثة المعراج.","مكية، فيها ذكر لرؤية النبي صلى الله عليه وسلم جبريل عليه السلام في صورته الحقيقية."],
+54:["لذكر انشقاق القمر كمعجزة ظاهرة أُجريت للنبي صلى الله عليه وسلم.","مكية، تتحدث عن عناد المشركين رغم وضوح الآيات."],
+55:["من أسماء الله الحسنى، وتُعرف بعروس القرآن لتكرار آية 'فبأي آلاء ربكما تكذبان'.","تُعدد نعم الله على الإنس والجن، واختُلف في كونها مكية أو مدنية."],
+56:["من أسماء يوم القيامة، لأنها واقعة لا ريب فيها.","مكية، تقسّم الناس يوم القيامة إلى ثلاثة أصناف."],
+57:["لذكر إنزال الحديد وما فيه من بأس شديد ومنافع للناس.","مدنية، من أوائل ما نزل بالمدينة، تدعو للإنفاق في سبيل الله."],
+58:["لقصة المرأة (خولة بنت ثعلبة) التي جادلت النبي صلى الله عليه وسلم في أمر زوجها المُظاهِر منها.","مدنية، نزلت لتشريع حكم الظهار."],
+59:["لحديثها عن إجلاء يهود بني النضير من المدينة، وهو أول حشر لهم.","مدنية، نزلت عقب غزوة بني النضير."],
+60:["لحديثها عن امتحان المهاجرات المؤمنات اللاتي هاجرن من مكة.","مدنية، نزلت لبيان حكم موالاة المؤمنين للكافرين المحاربين."],
+61:["لحث المؤمنين على القتال في سبيل الله صفًا واحدًا كالبنيان المرصوص.","مدنية، تدعو للجدية بين القول والعمل."],
+62:["لذكر أحكام يوم الجمعة وصلاتها.","مدنية، تحث على السعي لصلاة الجمعة وترك البيع عند ندائها."],
+63:["لكشف صفات المنافقين وخداعهم في القول دون الفعل.","مدنية، نزلت في سياق أحداث غزوة بني المصطلق."],
+64:["لذكر يوم التغابن، وهو أحد أسماء يوم القيامة حين يظهر غبن الكافرين وربح المؤمنين.","مدنية، تتحدث عن الابتلاء بالأموال والأولاد."],
+65:["لبيان أحكام الطلاق والعدة وحقوق المرأة المطلقة.","مدنية، فصّلت تشريعات دقيقة متعلقة بالطلاق."],
+66:["لحادثة تحريم النبي صلى الله عليه وسلم على نفسه أمرًا مباحًا إرضاءً لبعض أزواجه.","مدنية، نزلت لتصحيح موقف تشريعي معين."],
+67:["من أسماء الله الحسنى (تبارك الذي بيده الملك)، وتُسمى المنجية والواقية لحمايتها قارئها من عذاب القبر.","مكية، تدعو للتفكر في عظمة خلق الله."],
+68:["قسم بالقلم وما يسطره الكاتبون، وتُسمى أيضًا سورة ن لافتتاحها بهذا الحرف.","مكية، من أوائل ما نزل، وترد على اتهام المشركين للنبي بالجنون."],
+69:["من أسماء يوم القيامة، لأنها الحقة الواقعة التي لا ريب فيها.","مكية، تصف أهوال يوم القيامة ومصير المكذبين."],
+70:["لذكر معارج (مصاعد) الملائكة التي تعرج بها إلى الله.","مكية، تصف حال الإنسان في الشدة والرخاء."],
+71:["قصة نبي الله نوح عليه السلام ودعوته الطويلة لقومه.","مكية، تسرد أسلوب نوح المتنوع في الدعوة وعناد قومه."],
+72:["لحديثها عن استماع نفر من الجن للقرآن الكريم وإيمانهم به.","مكية، تكشف عالم الجن وتفاعلهم مع الوحي."],
+73:["لمخاطبة النبي صلى الله عليه وسلم وهو 'متزمل' أي متلفف بثيابه عند بدء الوحي.","مكية في معظمها، تأمر بقيام الليل تهيئة لأعباء الرسالة."],
+74:["لمخاطبة النبي صلى الله عليه وسلم وهو 'متدثر' بثيابه.","من أوائل ما نزل من القرآن، أمرت النبي بالإنذار والدعوة الجهرية."],
+75:["قسم بيوم القيامة وأحداثه وأهواله.","مكية، ترد على منكري البعث بأدلة عقلية."],
+76:["لذكر خلق الإنسان من نطفة أمشاج وابتلائه، وتُسمى أيضًا سورة الدهر.","اختُلف في كونها مكية أو مدنية، تصف جزاء الأبرار."],
+77:["قسم بالرياح المرسلات، وقيل بالملائكة المرسلة بالوحي.","مكية، يتكرر فيها التذكير بيوم القيامة بأسلوب مهيب."],
+78:["لذكر 'النبأ العظيم'، وهو يوم القيامة الذي اختلف الناس فيه.","مكية، تصف مشاهد يوم القيامة والجنة والنار."],
+79:["قسم بالملائكة النازعات لأرواح الكفار بشدة عند الموت.","مكية، تقارن بين مصير الطاغين والخائفين من مقام ربهم."],
+80:["لعتاب لطيف للنبي صلى الله عليه وسلم حين عبس وأعرض عن الصحابي الأعمى ابن أم مكتوم.","مكية، نزلت في سياق حرص النبي على إسلام أحد صناديد قريش."],
+81:["لذكر 'تكوير' الشمس، أي لفّها وإخفاء نورها يوم القيامة.","مكية، تصف علامات انقلاب نظام الكون يوم القيامة."],
+82:["لذكر 'انفطار' السماء، أي انشقاقها يوم القيامة.","مكية، تصف أهوال الساعة وحساب النفوس."],
+83:["لذم من يُنقصون المكيال والميزان إذا باعوا للناس (المطففين).","مكية، نزلت لمعالجة ظاهرة انتشرت في التعامل التجاري بالمدينة قبيل الهجرة، وقيل في مكة."],
+84:["لذكر 'انشقاق' السماء وتصدعها يوم القيامة.","مكية، تتحدث عن استسلام الكون كله لأمر الله."],
+85:["قسم بالسماء ذات البروج (النجوم الكبيرة)، وفيها قصة أصحاب الأخدود.","مكية، تسلية للمؤمنين المستضعفين بذكر صبر من قبلهم على الفتنة."],
+86:["قسم بالنجم الطارق الذي يُرى ليلاً.","مكية، تؤكد قدرة الله على إعادة خلق الإنسان بعد الموت."],
+87:["لأمر النبي صلى الله عليه وسلم بتسبيح اسم ربه الأعلى.","مكية، تحث على التذكر والتيسير في الدعوة."],
+88:["من أسماء يوم القيامة الذي يغشى الناس بأهواله (الغاشية).","مكية، تصف حال أهل النار وأهل الجنة يوم القيامة."],
+89:["قسم بوقت الفجر لعظمته وبركته.","مكية، تذكّر بمصير الأمم الطاغية كعاد وثمود وفرعون."],
+90:["قسم بالبلد الأمين، وهو مكة المكرمة.","مكية، تتحدث عن مكابدة الإنسان في الحياة وطريق الخير والشر."],
+91:["قسم بالشمس وضحاها، ثم بمخلوقات أخرى تترى.","مكية، تتحدث عن تزكية النفس وتدسيتها، وقصة ناقة صالح."],
+92:["قسم بالليل إذا يغشى الكون بظلامه.","مكية، تبيّن اختلاف مساعي الناس بين خير وشر."],
+93:["قسم بوقت الضحى، نزلت لتطييب خاطر النبي صلى الله عليه وسلم بعد انقطاع الوحي فترة من الزمن.","مكية، جاءت لتبديد حزن النبي وتثبيت قلبه."],
+94:["لذكر شرح الله صدر النبي صلى الله عليه وسلم وتيسير أمره.","مكية، ترتبط بسورة الضحى في التسلية والتثبيت."],
+95:["قسم بالتين والزيتون، وهما رمزان لأرض مباركة (الشام) اشتهرت بهما.","مكية، تتحدث عن أحسن تقويم خلق الله للإنسان."],
+96:["لذكر خلق الإنسان من 'علق' (دم متجمد)، وهي أول سورة نزلت من القرآن الكريم بغار حراء.","مكية، تمثل بداية الوحي والرسالة."],
+97:["لذكر 'ليلة القدر' العظيمة التي فيها نزل القرآن، وفضلها العظيم.","مكية، تبيّن شرف الليلة التي بدأ فيها نزول القرآن."],
+98:["لمجيء الرسول صلى الله عليه وسلم بـ'البينة' الواضحة لأهل الكتاب والمشركين.","مدنية، توضح موقف أهل الكتاب من الرسالة الجديدة."],
+99:["لوصف زلزلة الأرض الشديدة يوم القيامة وإخراجها لما فيها.","مدنية، تصف مشهدًا من أهوال الساعة."],
+100:["قسم بالخيل العاديات (المسرعة جريًا) في الغزو والجهاد.","مكية، تصف جحود الإنسان لنعم ربه."],
+101:["من أسماء يوم القيامة التي تقرع القلوب بشدة أهوالها (القارعة).","مكية، تصف حال الناس يوم القيامة كالفراش المبثوث."],
+102:["لذم الانشغال بالتفاخر والتكاثر في الدنيا (الأموال والأولاد) عن الاستعداد للآخرة.","مكية، تحذّر من الغفلة حتى يأتي الموت."],
+103:["نسبة إلى العصر (الزمن أو الدهر) الذي أقسم الله به.","مكية، تلخص أسباب النجاة من الخسران في أربع صفات."],
+104:["لذم كل من يعيب الناس بلسانه (الهمزة) أو بإشارته (اللمزة).","مكية، تحذر من التفاخر بالمال وعاقبته."],
+105:["نسبة لقصة أصحاب الفيل الذين حاولوا هدم الكعبة فأهلكهم الله.","مكية، وقعت الحادثة عام ولادة النبي صلى الله عليه وسلم تقريبًا."],
+106:["نسبة لقبيلة قريش وإيلافها (تمكينها) من رحلتي الشتاء والصيف التجاريتين الآمنتين.","مكية، مرتبطة بسورة الفيل، تدعو قريشًا لشكر النعمة بعبادة رب الكعبة."],
+107:["لذكر 'الماعون'، وهو كل ما يُستعان به من أدوات المنزل البسيطة، ومنع صاحب هذه الصفات له عن جيرانه.","مكية، تربط بين صدق الإيمان والرحمة بالضعفاء."],
+108:["لذكر 'الكوثر'، وهو الخير الكثير الذي أعطاه الله لنبيه، وفُسّر بنهر في الجنة.","مكية، نزلت ردًّا على من عيّر النبي بانقطاع نسله."],
+109:["إعلان صريح بالبراءة من عبادة الكافرين وآلهتهم.","مكية، نزلت ردًّا على عرض من قريش بالتناوب في العبادة."],
+110:["لبشارة النصر من الله وفتح مكة القريب.","مدنية، من آخر ما نزل، وفيها إشارة إلى اقتراب أجل النبي صلى الله عليه وسلم."],
+111:["نسبة للحبل المفتول من الليف (المسد) الذي وُصفت به زوجة أبي لهب.","مكية، نزلت في أبي لهب عمّ النبي وزوجته لعداوتهما الشديدة للدعوة."],
+112:["لأنها خالصة في توحيد الله وتنزيهه عن الشريك والولد.","مكية، نزلت ردًّا على سؤال المشركين عن صفة رب النبي صلى الله عليه وسلم."],
+113:["لذكر الاستعاذة بربّ 'الفلق' أي الصبح.","مكية، إحدى سورتي المعوذتين، استعاذة من الشرور الخارجية."],
+114:["لذكر الاستعاذة بربّ 'الناس' من شر وسواس الشيطان.","مكية، السورة الأخيرة في ترتيب المصحف، استعاذة من الشر الداخلي (الوسواس)."]
+};
+
+// Fallback Arabic surah names in Mushaf order (used until API metadata loads)
+const namesFallback = ["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الإنسان","المرسلات","النبأ","النازعات","عبس","التكوير","الانفطار","المطففين","الانشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
+
+let surahMeta = namesFallback.map((n,i)=>({number:i+1,name:n,type:null,ayahs:null}));
+let currentIndex = 0;
+const themes = [
+  {id:'emerald', label:'زمردي وذهبي'},
+  {id:'navy', label:'ليلي فضي'},
+  {id:'maroon', label:'عنّابي نحاسي'},
+  {id:'desert', label:'صحراوي فيروزي'},
+  {id:'dark', label:'داكن ذهبي'}
+];
+
+function toArabicNumber(num){
+  const map = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+  return String(num).split('').map(d => map[+d]).join('');
+}
+
+function applyTheme(id){
+  if(id === 'emerald'){ document.documentElement.removeAttribute('data-theme'); }
+  else{ document.documentElement.setAttribute('data-theme', id); }
+  renderThemeRow(id);
+}
+
+function renderThemeRow(activeId){
+  const row = document.getElementById('themeRow');
+  row.innerHTML = '';
+  themes.forEach(t=>{
+    const dot = document.createElement('button');
+    dot.className = 'theme-dot' + (t.id===activeId ? ' active':'');
+    dot.title = t.label;
+    dot.style.background = ({
+      emerald:'linear-gradient(135deg,#0E3B2E,#B4892E)',
+      navy:'linear-gradient(135deg,#16324F,#7C8FA6)',
+      maroon:'linear-gradient(135deg,#5C1F1A,#B97A45)',
+      desert:'linear-gradient(135deg,#2F6E5E,#C79A3B)',
+      dark:'linear-gradient(135deg,#121614,#C9A227)'
+    })[t.id];
+    dot.addEventListener('click', ()=> applyTheme(t.id));
+    row.appendChild(dot);
+  });
+}
+
+function renderList(filter=''){
+  const list = document.getElementById('surahList');
+  list.innerHTML = '';
+  surahMeta.forEach((s, i) => {
+    if(filter && !s.name.includes(filter) && !String(s.number).includes(filter)) return;
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.className = i === currentIndex ? 'active' : '';
+    btn.innerHTML = `
+      <span class="num">${toArabicNumber(s.number)}</span>
+      <span class="name-ar">${s.name}</span>
+      <span class="name-meta">${s.ayahs ? toArabicNumber(s.ayahs)+' آية' : ''}</span>
+    `;
+    btn.addEventListener('click', () => { currentIndex = i; render(); });
+    li.appendChild(btn);
+    list.appendChild(li);
+  });
+}
+
+async function loadSurahList(){
+  try{
+    const res = await fetch('https://api.alquran.cloud/v1/surah');
+    const data = await res.json();
+    if(data && data.data){
+      surahMeta = data.data.map(s => ({
+        number: s.number,
+        name: s.name.replace('سُورَةُ ',''),
+        type: s.revelationType === 'Meccan' ? 'مكية' : 'مدنية',
+        ayahs: s.numberOfAyahs
+      }));
+    }
+  }catch(e){ /* keep fallback names; type/ayahs stay null and are shown via per-surah fetch */ }
+  renderList();
+  render();
+}
+
+let ayahPages = [];
+let currentPage = 0;
+const PAGE_CHAR_TARGET = 1800;
+
+function buildPages(ayahs){
+  const pages = [];
+  let cur = [];
+  let len = 0;
+  ayahs.forEach(a => {
+    const textLen = a.text.length;
+    if(len + textLen > PAGE_CHAR_TARGET && cur.length){
+      pages.push(cur);
+      cur = [];
+      len = 0;
+    }
+    cur.push(a);
+    len += textLen;
+  });
+  if(cur.length) pages.push(cur);
+  return pages;
+}
+
+function renderPage(){
+  const container = document.getElementById('ayatContainer');
+  const total = ayahPages.length || 1;
+  if(!ayahPages.length){
+    document.getElementById('pageLabel').textContent = 'صفحة ١ من ١';
+    document.getElementById('pagePrev').disabled = true;
+    document.getElementById('pageNext').disabled = true;
+    return;
+  }
+  const page = ayahPages[currentPage];
+  container.innerHTML = page.map(a =>
+    `<span class="ayah">${a.text}<span class="ayah-num">${toArabicNumber(a.numberInSurah)}</span></span> `
+  ).join('');
+  document.getElementById('pageLabel').textContent = `صفحة ${toArabicNumber(currentPage+1)} من ${toArabicNumber(total)}`;
+  document.getElementById('pagePrev').disabled = currentPage === 0;
+  document.getElementById('pageNext').disabled = currentPage === total - 1;
+  document.getElementById('bismillah').style.display = (currentIndex >= 0 && surahMeta[currentIndex].number === 9) ? 'none' : (currentPage === 0 ? 'block' : 'none');
+}
+
+document.getElementById('pagePrev').addEventListener('click', () => {
+  if(currentPage > 0){ currentPage--; renderPage(); window.scrollTo({top:0, behavior:'smooth'}); }
+});
+document.getElementById('pageNext').addEventListener('click', () => {
+  if(currentPage < ayahPages.length - 1){ currentPage++; renderPage(); window.scrollTo({top:0, behavior:'smooth'}); }
+});
+
+async function loadAyat(surahNumber){
+  const container = document.getElementById('ayatContainer');
+  container.innerHTML = '<div class="state-msg">جارٍ تحميل الآيات...</div>';
+  ayahPages = [];
+  currentPage = 0;
+  try{
+    const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/quran-uthmani`);
+    const data = await res.json();
+    if(!data || !data.data || !data.data.ayahs) throw new Error('no data');
+    const type = data.data.revelationType === 'Meccan' ? 'مكية' : 'مدنية';
+    const count = data.data.numberOfAyahs;
+    document.getElementById('badgeType').textContent = type;
+    document.getElementById('badgeCount').textContent = `${toArabicNumber(count)} آيات`;
+    ayahPages = buildPages(data.data.ayahs);
+    renderPage();
+  }catch(e){
+    container.innerHTML = '<div class="state-msg">تعذّر تحميل نص الآيات حاليًا. تحقق من اتصال الإنترنت وحاول مجددًا.</div>';
+    document.getElementById('badgeType').textContent = '—';
+    document.getElementById('badgeCount').textContent = '—';
+    document.getElementById('pageLabel').textContent = '—';
+    document.getElementById('pagePrev').disabled = true;
+    document.getElementById('pageNext').disabled = true;
+  }
+}
+
+async function loadTafsir(surahNumber){
+  const el = document.getElementById('tafsirText');
+  el.textContent = 'جارٍ تحميل التفسير...';
+  try{
+    const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.muyassar`);
+    const data = await res.json();
+    if(!data || !data.data || !data.data.ayahs) throw new Error('no data');
+    el.textContent = data.data.ayahs.map(a => `(${a.numberInSurah}) ${a.text}`).join('\n\n');
+  }catch(e){
+    el.textContent = 'تعذّر تحميل التفسير حاليًا. تحقق من اتصال الإنترنت وحاول مجددًا.';
+  }
+}
+
+function render(){
+  const s = surahMeta[currentIndex];
+  const meta = info[s.number] || ["—","—"];
+  document.getElementById('orderLabel').textContent = `السورة رقم ${toArabicNumber(s.number)} في المصحف`;
+  document.getElementById('surahName').textContent = `سورة ${s.name}`;
+  document.getElementById('badgeType').textContent = s.type || '...';
+  document.getElementById('badgeCount').textContent = s.ayahs ? `${toArabicNumber(s.ayahs)} آيات` : '...';
+  document.getElementById('badgeOrder').textContent = `الترتيب ${toArabicNumber(currentIndex+1)} من ١١٤`;
+  document.getElementById('namingReason').textContent = meta[0];
+  document.getElementById('revelationContext').textContent = meta[1];
+
+  document.getElementById('tafsirBox').classList.remove('open');
+  document.getElementById('tafsirToggle').classList.remove('open');
+  document.getElementById('tafsirToggle').querySelector('span').textContent = 'عرض التفسير الميسّر';
+
+  document.getElementById('prevBtn').disabled = currentIndex === 0;
+  document.getElementById('nextBtn').disabled = currentIndex === surahMeta.length - 1;
+
+  renderList(document.getElementById('searchBox').value.trim());
+  loadAyat(s.number);
+  loadTafsir(s.number);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => { if(currentIndex>0){ currentIndex--; render(); } });
+document.getElementById('nextBtn').addEventListener('click', () => { if(currentIndex<surahMeta.length-1){ currentIndex++; render(); } });
+
+let ayatFontSize = 29;
+function applyFontSize(){
+  document.documentElement.style.setProperty('--ayat-size', ayatFontSize + 'px');
+  document.getElementById('fontLabel').textContent = ayatFontSize;
+}
+document.getElementById('fontPlus').addEventListener('click', () => {
+  if(ayatFontSize < 46){ ayatFontSize += 2; applyFontSize(); }
+});
+document.getElementById('fontMinus').addEventListener('click', () => {
+  if(ayatFontSize > 18){ ayatFontSize -= 2; applyFontSize(); }
+});
+applyFontSize();
+document.getElementById('searchBox').addEventListener('input', (e)=> renderList(e.target.value.trim()));
+document.getElementById('tafsirToggle').addEventListener('click', () => {
+  const box = document.getElementById('tafsirBox');
+  const btn = document.getElementById('tafsirToggle');
+  const isOpen = box.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+  btn.querySelector('span').textContent = isOpen ? 'إخفاء التفسير' : 'عرض التفسير الميسّر';
+});
+
+applyTheme('emerald');
+renderList();
+loadSurahList();
+
+// Drag-to-scroll for the horizontal surah list
+(function enableDragScroll(){
+  const el = document.getElementById('surahList');
+  let isDown = false, startX = 0, scrollLeft = 0, moved = false;
+  el.addEventListener('mousedown', (e) => {
+    isDown = true; moved = false;
+    startX = e.pageX; scrollLeft = el.scrollLeft;
+    el.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mouseup', () => { isDown = false; el.style.cursor = 'grab'; });
+  window.addEventListener('mousemove', (e) => {
+    if(!isDown) return;
+    e.preventDefault();
+    const dx = e.pageX - startX;
+    if(Math.abs(dx) > 4) moved = true;
+    el.scrollLeft = scrollLeft - dx;
+  });
+  // Prevent click-through firing after a real drag
+  el.addEventListener('click', (e) => { if(moved){ e.stopPropagation(); e.preventDefault(); } }, true);
+  el.style.cursor = 'grab';
+})();
+
+// PWA: register service worker so the app installs on the phone
+// and keeps working (with previously-viewed surahs) without internet.
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+  });
+}
+
+/* ===================== التبويبات الرئيسية ===================== */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+/* ===================== مواقيت الصلاة ===================== */
+const PRAYER_NAMES = {
+  Fajr:{ar:'الفجر', icon:'🌙'},
+  Sunrise:{ar:'الشروق', icon:'🌅'},
+  Dhuhr:{ar:'الظهر', icon:'☀️'},
+  Asr:{ar:'العصر', icon:'🌤️'},
+  Maghrib:{ar:'المغرب', icon:'🌇'},
+  Isha:{ar:'العشاء', icon:'🌌'}
+};
+const PRAYER_ORDER = ['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'];
+let prayerTimings = null;
+let prayerHijri = null;
+let prayerCountdownInterval = null;
+
+function pad2(n){ return n.toString().padStart(2,'0'); }
+
+function to12h(t){
+  // t like "04:35"
+  const [h,m] = t.split(':').map(Number);
+  const period = h>=12 ? 'م' : 'ص';
+  let h12 = h % 12; if(h12===0) h12=12;
+  return `${pad2(h12)}:${pad2(m)} ${period}`;
+}
+
+async function fetchPrayerTimes(lat, lng, label){
+  const method = document.getElementById('prayerMethod').value;
+  const content = document.getElementById('prayerContent');
+  content.innerHTML = '<div class="prayer-msg">جارٍ تحميل مواقيت الصلاة...</div>';
+  try{
+    const url = `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lng}&method=${method}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if(data.code !== 200) throw new Error('bad response');
+    prayerTimings = data.data.timings;
+    prayerHijri = data.data.date.hijri;
+    document.getElementById('prayerLocLabel').textContent = `📍 ${label}`;
+    renderPrayerTimes();
+  }catch(err){
+    content.innerHTML = '<div class="prayer-msg">تعذّر تحميل مواقيت الصلاة. تحقق من اتصال الإنترنت وحاول مرة أخرى.</div>';
+  }
+}
+
+function getNextPrayer(){
+  if(!prayerTimings) return null;
+  const now = new Date();
+  const nowMins = now.getHours()*60 + now.getMinutes();
+  for(const key of PRAYER_ORDER){
+    if(key==='Sunrise') continue;
+    const raw = prayerTimings[key];
+    if(!raw) continue;
+    const [h,m] = raw.split(':').map(Number);
+    if(h*60+m > nowMins){
+      return {key, time: raw};
+    }
+  }
+  return {key:'Fajr', time: prayerTimings['Fajr'], tomorrow:true};
+}
+
+function renderPrayerTimes(){
+  const content = document.getElementById('prayerContent');
+  const next = getNextPrayer();
+  let html = '';
+  if(next){
+    html += `<div class="prayer-next-card">
+      <div class="lbl">الصلاة القادمة</div>
+      <div class="name">${PRAYER_NAMES[next.key].icon} ${PRAYER_NAMES[next.key].ar}</div>
+      <div class="countdown" id="prayerCountdown">--:--:--</div>
+    </div>`;
+  }
+  html += '<div class="prayer-grid">';
+  PRAYER_ORDER.forEach(key=>{
+    const raw = prayerTimings[key];
+    if(!raw) return;
+    const isActive = next && key===next.key;
+    html += `<div class="prayer-card ${isActive?'active':''}">
+      <div class="p-icon">${PRAYER_NAMES[key].icon}</div>
+      <div class="p-name">${PRAYER_NAMES[key].ar}</div>
+      <div class="p-time">${to12h(raw)}</div>
+    </div>`;
+  });
+  html += '</div>';
+  if(prayerHijri){
+    html += `<div class="prayer-hijri">${prayerHijri.day} ${prayerHijri.month.ar} ${prayerHijri.year} هـ</div>`;
+  }
+  content.innerHTML = html;
+  startPrayerCountdown();
+}
+
+function startPrayerCountdown(){
+  if(prayerCountdownInterval) clearInterval(prayerCountdownInterval);
+  const tick = ()=>{
+    const el = document.getElementById('prayerCountdown');
+    if(!el) return;
+    const next = getNextPrayer();
+    if(!next) return;
+    const now = new Date();
+    const target = new Date();
+    const [h,m] = next.time.split(':').map(Number);
+    target.setHours(h, m, 0, 0);
+    if(next.tomorrow || target <= now) target.setDate(target.getDate()+1);
+    const diff = Math.max(0, target - now);
+    const hh = Math.floor(diff/3600000);
+    const mm = Math.floor((diff%3600000)/60000);
+    const ss = Math.floor((diff%60000)/1000);
+    el.textContent = `${pad2(hh)}:${pad2(mm)}:${pad2(ss)}`;
+    if(diff<=0){ renderPrayerTimes(); }
+  };
+  tick();
+  prayerCountdownInterval = setInterval(tick, 1000);
+}
+
+function locatePrayerTimes(){
+  const label = document.getElementById('prayerLocLabel');
+  if(!navigator.geolocation){
+    label.textContent = '📍 المتصفح لا يدعم تحديد الموقع، سيتم استخدام مكة المكرمة';
+    fetchPrayerTimes(21.4225, 39.8262, 'مكة المكرمة (افتراضي)');
+    return;
+  }
+  label.textContent = '📍 يتم تحديد موقعك...';
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      fetchPrayerTimes(pos.coords.latitude, pos.coords.longitude, 'موقعك الحالي');
+    },
+    ()=>{
+      label.textContent = '📍 تعذّر الوصول للموقع، سيتم استخدام مكة المكرمة';
+      fetchPrayerTimes(21.4225, 39.8262, 'مكة المكرمة (افتراضي)');
+    },
+    {timeout:8000}
+  );
+}
+
+document.getElementById('prayerLocateBtn').addEventListener('click', locatePrayerTimes);
+document.getElementById('prayerMethod').addEventListener('change', locatePrayerTimes);
+locatePrayerTimes();
+
+/* ===================== المسبحة الإلكترونية ===================== */
+const TASBIH_TEXTS = [
+  'سُبْحَانَ اللَّهِ',
+  'الْحَمْدُ لِلَّهِ',
+  'اللَّهُ أَكْبَرُ',
+  'لَا إِلَٰهَ إِلَّا اللَّهُ',
+  'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ',
+  'أَسْتَغْفِرُ اللَّهَ',
+  'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ سُبْحَانَ اللَّهِ الْعَظِيمِ',
+  'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ'
+];
+let tasbihCount = parseInt(localStorage.getItem('nh_tasbih_count')||'0',10);
+let tasbihGrandTotal = parseInt(localStorage.getItem('nh_tasbih_total')||'0',10);
+let tasbihTarget = parseInt(localStorage.getItem('nh_tasbih_target')||'99',10);
+let tasbihDhikrIdx = parseInt(localStorage.getItem('nh_tasbih_dhikr')||'0',10);
+
+const tasbihRing = document.getElementById('tasbihRing');
+const tasbihCountEl = document.getElementById('tasbihCount');
+const tasbihProgressFill = document.getElementById('tasbihProgressFill');
+const tasbihTargetLabel = document.getElementById('tasbihTargetLabel');
+const tasbihDhikrText = document.getElementById('tasbihDhikrText');
+const tasbihGrandTotalEl = document.getElementById('tasbihGrandTotal');
+const tasbihDhikrSelect = document.getElementById('tasbihDhikrSelect');
+const tasbihTargetSelect = document.getElementById('tasbihTargetSelect');
+
+tasbihDhikrSelect.value = String(tasbihDhikrIdx);
+tasbihTargetSelect.value = String(tasbihTarget);
+
+function renderTasbih(){
+  tasbihCountEl.textContent = tasbihCount;
+  tasbihGrandTotalEl.textContent = tasbihGrandTotal;
+  tasbihDhikrText.textContent = TASBIH_TEXTS[tasbihDhikrIdx];
+  if(tasbihTarget>0){
+    tasbihTargetLabel.textContent = `الهدف: ${tasbihTarget}`;
+    const pct = Math.min(100, (tasbihCount/tasbihTarget)*100);
+    tasbihProgressFill.style.width = pct+'%';
+    tasbihRing.classList.toggle('complete', tasbihCount>=tasbihTarget && tasbihTarget>0);
+  } else {
+    tasbihTargetLabel.textContent = 'بلا حد';
+    tasbihProgressFill.style.width = '0%';
+    tasbihRing.classList.remove('complete');
+  }
+}
+
+function saveTasbih(){
+  localStorage.setItem('nh_tasbih_count', tasbihCount);
+  localStorage.setItem('nh_tasbih_total', tasbihGrandTotal);
+  localStorage.setItem('nh_tasbih_target', tasbihTarget);
+  localStorage.setItem('nh_tasbih_dhikr', tasbihDhikrIdx);
+}
+
+tasbihRing.addEventListener('click', ()=>{
+  tasbihCount++;
+  tasbihGrandTotal++;
+  if('vibrate' in navigator) navigator.vibrate(15);
+  if(tasbihTarget>0 && tasbihCount===tasbihTarget && 'vibrate' in navigator){
+    navigator.vibrate([40,60,40]);
+  }
+  saveTasbih();
+  renderTasbih();
+});
+
+document.getElementById('tasbihResetBtn').addEventListener('click', ()=>{
+  tasbihCount = 0;
+  saveTasbih();
+  renderTasbih();
+});
+
+document.getElementById('tasbihUndoBtn').addEventListener('click', ()=>{
+  if(tasbihCount>0){ tasbihCount--; tasbihGrandTotal = Math.max(0, tasbihGrandTotal-1); saveTasbih(); renderTasbih(); }
+});
+
+tasbihDhikrSelect.addEventListener('change', ()=>{
+  tasbihDhikrIdx = parseInt(tasbihDhikrSelect.value,10);
+  tasbihCount = 0;
+  saveTasbih();
+  renderTasbih();
+});
+
+tasbihTargetSelect.addEventListener('change', ()=>{
+  tasbihTarget = parseInt(tasbihTargetSelect.value,10);
+  tasbihCount = 0;
+  saveTasbih();
+  renderTasbih();
+});
+
+renderTasbih();
+
+/* ===================== تذكير الصلاة على النبي ﷺ كل نصف ساعة ===================== */
+const SALAWAT_PHRASES = [
+  'اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ',
+  'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ',
+  'صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ',
+  'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ عَدَدَ خَلْقِكَ وَرِضَا نَفْسِكَ',
+  'اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى آلِ إِبْرَاهِيمَ'
+];
+let salawatInterval = null;
+const salawatOverlay = document.getElementById('salawatOverlay');
+const salawatModalText = document.getElementById('salawatModalText');
+const salawatReminderToggle = document.getElementById('salawatReminderToggle');
+
+function showSalawatReminder(){
+  const phrase = SALAWAT_PHRASES[Math.floor(Math.random()*SALAWAT_PHRASES.length)];
+  salawatModalText.textContent = phrase;
+  salawatOverlay.classList.add('show');
+  if('Notification' in window && Notification.permission==='granted'){
+    try{ new Notification('حان وقت الصلاة على النبي ﷺ', {body: phrase, icon: 'icon-192.png'}); }catch(e){}
+  }
+}
+
+document.getElementById('salawatCloseBtn').addEventListener('click', ()=>{
+  salawatOverlay.classList.remove('show');
+});
+
+function startSalawatReminder(){
+  if(salawatInterval) clearInterval(salawatInterval);
+  salawatInterval = setInterval(showSalawatReminder, 30*60*1000);
+}
+function stopSalawatReminder(){
+  if(salawatInterval){ clearInterval(salawatInterval); salawatInterval=null; }
+}
+
+salawatReminderToggle.addEventListener('change', ()=>{
+  localStorage.setItem('nh_salawat_reminder', salawatReminderToggle.checked ? '1':'0');
+  if(salawatReminderToggle.checked){
+    if('Notification' in window && Notification.permission==='default'){
+      Notification.requestPermission();
+    }
+    startSalawatReminder();
+  } else {
+    stopSalawatReminder();
+  }
+});
+
+if(localStorage.getItem('nh_salawat_reminder')==='1'){
+  salawatReminderToggle.checked = true;
+  startSalawatReminder();
+}
+
+/* ===================== بيانات الغزوات ===================== */
+const GHAZAWAT = [
+  {name:"غزوة بدر الكبرى", year:"2 هـ", desc:"أول معركة فاصلة بين المسلمين وقريش، انتصر فيها نحو 313 مسلمًا على جيش قريش رغم قلة العدد والعتاد، وقُتل فيها كبار صناديد قريش كأبي جهل."},
+  {name:"غزوة أُحد", year:"3 هـ", desc:"وقعت عند جبل أحد، وكان النصر في بدايتها للمسلمين، لكن مخالفة بعض الرماة لأمر النبي ﷺ بترك مواقعهم أدت إلى انقلاب الموقف، واستُشهد فيها حمزة بن عبدالمطلب سيد الشهداء."},
+  {name:"غزوة الخندق (الأحزاب)", year:"5 هـ", desc:"تحالفت قبائل قريش وغطفان واليهود لحصار المدينة، فاقترح سلمان الفارسي حفر خندق حول المدينة لصدّ الفرسان، ففشل الحصار وتفرق الأحزاب بريح شديدة وجند من عند الله."},
+  {name:"غزوة بني قريظة", year:"5 هـ", desc:"عقب غزوة الخندق مباشرة، حاصر المسلمون يهود بني قريظة لنقضهم العهد وتحالفهم مع الأحزاب أثناء الحصار."},
+  {name:"صلح الحديبية", year:"6 هـ", desc:"هدنة سلمية بين المسلمين وقريش منعت القتال عشر سنوات، ووصفها القرآن بـ«الفتح المبين» لأنها فتحت الباب لانتشار الإسلام ودخول الناس فيه أفواجًا."},
+  {name:"غزوة خيبر", year:"7 هـ", desc:"فتح المسلمون فيها حصون يهود خيبر الحصينة شمال المدينة، بعد أن كانوا يحرّضون القبائل على قتال المسلمين، وفيها ظهرت شجاعة علي بن أبي طالب."},
+  {name:"فتح مكة", year:"8 هـ", desc:"الفتح الأعظم الذي دخل فيه المسلمون مكة دون قتال يُذكر، فعفا النبي ﷺ عن أهلها الذين آذوه سنوات طويلة وقال لهم: «اذهبوا فأنتم الطلقاء»، فدخل الناس في دين الله أفواجًا."},
+  {name:"غزوة حنين", year:"8 هـ", desc:"وقعت بعد فتح مكة مباشرة ضد قبيلتي هوازن وثقيف، وفوجئ المسلمون بكمين في الوادي ففرّ بعضهم لحظة، لكن النبي ﷺ ثبت وأعاد الكرّة فتحقق النصر."},
+  {name:"غزوة تبوك", year:"9 هـ", desc:"آخر غزوة كبرى خرج فيها النبي ﷺ بنفسه، توجّه بها لملاقاة الروم في أقصى الشمال، ولم يقع فيها قتال فعلي، لكنها أظهرت قوة الدولة الإسلامية الناشئة."},
+];
+
+function renderGhazawat(){
+  const grid = document.getElementById('ghazwaGrid');
+  if(!grid) return;
+  grid.innerHTML = GHAZAWAT.map(g=>`
+    <div class="ghazwa-card">
+      <div class="gh-title"><span class="gh-name">${g.name}</span><span class="gh-year">${g.year}</span></div>
+      <p>${g.desc}</p>
+    </div>`).join('');
+}
+renderGhazawat();
+
+/* ===================== بيانات أخلاق الرسول ﷺ ===================== */
+const AKHLAQ = [
+  {ic:"🗣️", tt:"الصدق", desc:"عُرف ﷺ بالصدق منذ صباه حتى لُقّب بـ«الصادق الأمين»، ولم يُعرف عنه كذب قط لا في جد ولا هزل."},
+  {ic:"🤝", tt:"الأمانة", desc:"كان أمينًا على ودائع الناس حتى في أشد أيام العداء، وائتمنه المشركون أنفسهم على أموالهم رغم معاداتهم لدعوته."},
+  {ic:"❤️", tt:"الرحمة", desc:"وصفه القرآن بأنه «رحمة للعالمين»، فكان يرحم الصغير والكبير، والصديق والعدو، والإنسان والحيوان."},
+  {ic:"🙇", tt:"التواضع", desc:"كان يخصف نعله بيده، ويرقع ثوبه، ويخدم نفسه وأهله، ويجلس مع الفقراء والمساكين رغم أنه سيد الخلق."},
+  {ic:"⚖️", tt:"العدل", desc:"ساوى بين الناس في تطبيق الشرع حتى قال: «لو أن فاطمة بنت محمد سرقت لقطعت يدها»، تأكيدًا على أن الشريعة فوق الجميع."},
+  {ic:"🕊️", tt:"العفو والصفح", desc:"عفا عن أهل مكة يوم الفتح رغم إيذائهم له طويلًا، وعفا عن أهل الطائف الذين رجموه، ودعا لهم بالهداية بدل أن يدعو عليهم."},
+  {ic:"🎁", tt:"الكرم والجود", desc:"كان أجود الناس بالخير، وكان أكثر جودًا في شهر رمضان، ولم يسأله أحد شيئًا يملكه فيمنعه إياه."},
+  {ic:"⏳", tt:"الصبر", desc:"صبر سنوات طويلة على أذى قريش له ولأصحابه دون أن يردّ الأذى بالمثل، وتحمّل مشقة الدعوة بثبات."},
+  {ic:"🏠", tt:"حسن العشرة مع الأهل", desc:"كان ﷺ ألطف الناس مع زوجاته وأهل بيته، يداعبهم ويشاركهم أعمال المنزل، وقالت عائشة رضي الله عنها إنه كان في مهنة أهله."},
+  {ic:"🐪", tt:"الرفق بالضعفاء والحيوان", desc:"أوصى بالرفق بالخدم والأرقاء والحيوان، ونهى عن تعذيب أي كائن حي أو تحميله فوق طاقته."},
+  {ic:"🌙", tt:"الزهد في الدنيا", desc:"عاش حياة بسيطة رغم قدرته على الترف، فكان بيته متواضعًا وطعامه يسيرًا، ولم تكن الدنيا غايته."},
+  {ic:"🛡️", tt:"الشجاعة", desc:"كان أشجع الناس في المواقف الحرجة، فثبت في غزوة حنين حين تفرق كثير من الناس، وقال علي رضي الله عنه: كنا إذا اشتد البأس نحتمي برسول الله ﷺ."},
+];
+
+function renderAkhlaq(){
+  const grid = document.getElementById('akhlaqGrid');
+  if(!grid) return;
+  grid.innerHTML = AKHLAQ.map(a=>`
+    <div class="akhlaq-card">
+      <div class="ic">${a.ic}</div>
+      <div class="tt">${a.tt}</div>
+      <p>${a.desc}</p>
+    </div>`).join('');
+}
+renderAkhlaq();
+
+/* ===================== الأحاديث النبوية (صحيح البخاري / صحيح مسلم) =====================
+   النصوص العربية تُجلب مباشرة عند الطلب من قاعدة بيانات hadith-api المفتوحة
+   (fawazahmed0/hadith-api عبر jsDelivr) لضمان دقة المتن دون كتابته يدويًا.
+   كل حديث يُربط بصفحته على sunnah.com كمصدر خارجي للشرح ودرجة الحديث بالتفصيل. */
+const HADITH_BOOKS = {
+  bukhari: { key:'bukhari', icon:'📗', name:'صحيح البخاري', edition:'ara-bukhari', sunnahSlug:'bukhari', maxCount:500 },
+  muslim:  { key:'muslim',  icon:'📘', name:'صحيح مسلم',   edition:'ara-muslim',  sunnahSlug:'muslim',  maxCount:500 },
+};
+const HADITH_PAGE_SIZE = 20;
+const hadithState = { cache:{}, currentBook:null, shownCount:0 };
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderHadithBookSelect(){
+  const wrap = document.getElementById('hadithBookSelect');
+  if(!wrap) return;
+  wrap.innerHTML = Object.values(HADITH_BOOKS).map(b=>`
+    <div class="hadith-book-card" data-book="${b.key}">
+      <div class="hb-icon">${b.icon}</div>
+      <div class="hb-name">${b.name}</div>
+      <div class="hb-count">حتى ${b.maxCount} حديث</div>
+    </div>`).join('');
+  wrap.querySelectorAll('.hadith-book-card').forEach(card=>{
+    card.addEventListener('click', ()=> openHadithBook(card.dataset.book));
+  });
+}
+
+async function loadHadithBook(key){
+  if(hadithState.cache[key]) return hadithState.cache[key];
+  const book = HADITH_BOOKS[key];
+  const url = `https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/${book.edition}.min.json`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('network');
+  const data = await res.json();
+  const hadiths = (data.hadiths || []).slice(0, book.maxCount);
+  hadithState.cache[key] = hadiths;
+  return hadiths;
+}
+
+async function openHadithBook(key){
+  const book = HADITH_BOOKS[key];
+  hadithState.currentBook = key;
+  hadithState.shownCount = 0;
+  document.getElementById('hadithBookSelect').style.display = 'none';
+  const reader = document.getElementById('hadithReader');
+  reader.style.display = 'block';
+  document.getElementById('hadithBookLabel').textContent = `${book.icon} ${book.name}`;
+  const list = document.getElementById('hadithList');
+  list.innerHTML = '<div class="state-msg">جارٍ تحميل الأحاديث...</div>';
+  document.getElementById('hadithLoadMoreBtn').style.display = 'none';
+  try{
+    await loadHadithBook(key);
+    list.innerHTML = '';
+    renderMoreHadiths();
+  }catch(e){
+    list.innerHTML = '<div class="state-msg">تعذّر تحميل الأحاديث، يرجى التحقق من الاتصال بالإنترنت والمحاولة مرة أخرى.</div>';
+  }
+}
+
+function renderMoreHadiths(){
+  const key = hadithState.currentBook;
+  const book = HADITH_BOOKS[key];
+  const items = hadithState.cache[key] || [];
+  const list = document.getElementById('hadithList');
+  const nextChunk = items.slice(hadithState.shownCount, hadithState.shownCount + HADITH_PAGE_SIZE);
+  nextChunk.forEach(h=>{
+    const gradeText = (h.grades && h.grades.length && h.grades[0].grade) ? h.grades[0].grade : 'صحيح';
+    const card = document.createElement('div');
+    card.className = 'hadith-card';
+    card.innerHTML = `
+      <div class="hc-head">
+        <span class="hc-num">حديث رقم ${h.hadithnumber}</span>
+        <span class="hc-grade">${escapeHtml(gradeText)}</span>
+      </div>
+      <p class="hc-text">${escapeHtml(h.text)}</p>
+      <div class="hc-foot">
+        <a class="hc-link" href="https://sunnah.com/${book.sunnahSlug}:${h.hadithnumber}" target="_blank" rel="noopener">الشرح والمصدر ↗</a>
+      </div>`;
+    list.appendChild(card);
+  });
+  hadithState.shownCount += nextChunk.length;
+  const loadMoreBtn = document.getElementById('hadithLoadMoreBtn');
+  loadMoreBtn.style.display = (hadithState.shownCount < items.length) ? 'inline-block' : 'none';
+  if(items.length === 0){
+    list.innerHTML = '<div class="state-msg">لا توجد أحاديث لعرضها حاليًا.</div>';
+  }
+}
+
+document.getElementById('hadithBackBtn')?.addEventListener('click', ()=>{
+  document.getElementById('hadithReader').style.display = 'none';
+  document.getElementById('hadithBookSelect').style.display = 'grid';
+  hadithState.currentBook = null;
+});
+document.getElementById('hadithLoadMoreBtn')?.addEventListener('click', renderMoreHadiths);
+
+renderHadithBookSelect();
+
+/* ===================== بيانات الاختبار: 100 سؤال × 5 اختيارات ===================== */
+const QUIZ = [
+{q:"كم عدد سور القرآن الكريم؟",o:["100 سورة","104 سور","114 سورة","120 سورة","124 سورة"],a:2},
+{q:"ما أول سورة نزلت كاملة من القرآن الكريم؟",o:["العلق","الفاتحة","المدثر","البقرة","الإخلاص"],a:1},
+{q:"ما أول ما نزل من القرآن الكريم (أول آيات)؟",o:["سورة الفاتحة","أول سورة العلق","سورة الإخلاص","سورة الناس","سورة يس"],a:1},
+{q:"ما أطول سورة في القرآن الكريم؟",o:["آل عمران","النساء","البقرة","الأعراف","التوبة"],a:2},
+{q:"ما أقصر سورة في القرآن الكريم؟",o:["الإخلاص","العصر","الكوثر","الناس","الفلق"],a:2},
+{q:"كم عدد آيات سورة البقرة؟",o:["200 آية","250 آية","286 آية","300 آية","176 آية"],a:2},
+{q:"ما السورة التي تُسمى «قلب القرآن»؟",o:["يس","الرحمن","الملك","الكهف","ق"],a:0},
+{q:"ما السورة الوحيدة التي لا تبدأ بالبسملة؟",o:["الأنفال","براءة (التوبة)","النمل","الفاتحة","الحجرات"],a:1},
+{q:"في أي سورة وردت قصة سليمان عليه السلام والنملة؟",o:["سبأ","النمل","ص","الأنبياء","القصص"],a:1},
+{q:"ما السورة التي سُميت باسم امرأة؟",o:["النساء","الأحزاب","مريم","التحريم","الممتحنة"],a:2},
+{q:"أيهما أكثر عددًا: السور المكية أم المدنية؟",o:["المدنية أكثر بفارق كبير","متساويتان تمامًا","المكية أكثر","المدنية فقط 5 سور","لا فرق بينهما"],a:2},
+{q:"في أي سورة وردت قصة أصحاب الكهف؟",o:["الكهف","يس","مريم","الإسراء","طه"],a:0},
+{q:"ما السورة التي بشّرت بفتح مكة ودخول الناس في الإسلام أفواجًا؟",o:["الفتح","النصر","التوبة","الأنفال","الحجرات"],a:1},
+{q:"ما السورة التي تُسمى «أم الكتاب»؟",o:["البقرة","الفاتحة","يس","الإخلاص","آل عمران"],a:1},
+{q:"كم عدد آيات سورة الفاتحة؟",o:["5 آيات","6 آيات","7 آيات","8 آيات","9 آيات"],a:2},
+{q:"أي سورة تحكي قصة أصحاب الفيل الذين أرادوا هدم الكعبة؟",o:["الفيل","قريش","الهمزة","الماعون","الكوثر"],a:0},
+{q:"في أي سورة وردت آية الكرسي؟",o:["آل عمران","البقرة","النساء","الأعراف","يونس"],a:1},
+{q:"ما السورة التي سُميت لذكر النحل وما فيه من نعمة العسل؟",o:["النحل","النمل","سبأ","الأنعام","المائدة"],a:0},
+{q:"في أي سورة وردت قصة أصحاب الأخدود؟",o:["البروج","الطارق","الفجر","الغاشية","الانشقاق"],a:0},
+{q:"أي سورة رويت فيها قصة يوسف عليه السلام بالتفصيل الكامل؟",o:["يوسف","يونس","هود","القصص","غافر"],a:0},
+{q:"في أي عام وُلد النبي محمد ﷺ؟",o:["عام الحزن","عام الفيل","عام الفتح","عام الوفود","عام الرمادة"],a:1},
+{q:"من هو والد النبي ﷺ؟",o:["أبو طالب","عبدالمطلب","عبدالله بن عبدالمطلب","أبو لهب","العباس"],a:2},
+{q:"من هي والدة النبي ﷺ؟",o:["خديجة بنت خويلد","آمنة بنت وهب","حليمة السعدية","صفية بنت عبدالمطلب","فاطمة بنت أسد"],a:1},
+{q:"من التي أرضعت النبي ﷺ في بادية بني سعد؟",o:["أم أيمن","آمنة بنت وهب","حليمة السعدية","أم سلمة","بركة الحبشية"],a:2},
+{q:"من كفل النبي ﷺ بعد وفاة جدّه عبدالمطلب؟",o:["عمه العباس","عمه أبو طالب","عمه أبو لهب","خاله","جدّه لأمه"],a:1},
+{q:"بم لُقّب النبي ﷺ بين قومه قبل البعثة لصدقه وأمانته؟",o:["الأمين فقط","الصادق الأمين","الرحيم","الهادي","سيد قريش"],a:1},
+{q:"من هي أول زوجات النبي ﷺ؟",o:["عائشة بنت أبي بكر","حفصة بنت عمر","خديجة بنت خويلد","زينب بنت جحش","سودة بنت زمعة"],a:2},
+{q:"في أي غار بدأ الوحي ينزل على النبي ﷺ؟",o:["غار ثور","غار حراء","غار في الطائف","غار في المدينة","غار في الشام"],a:1},
+{q:"كم كان عمر النبي ﷺ عندما بدأ نزول الوحي عليه؟",o:["30 سنة","35 سنة","40 سنة","45 سنة","50 سنة"],a:2},
+{q:"من هو الملَك الذي نزل بالوحي على النبي ﷺ؟",o:["ميكائيل","إسرافيل","جبريل عليه السلام","مالك","رضوان"],a:2},
+{q:"من أول من آمن بالنبي ﷺ من النساء؟",o:["عائشة","خديجة","فاطمة","حفصة","أم سلمة"],a:1},
+{q:"من أول من آمن بالنبي ﷺ من الرجال الأحرار البالغين؟",o:["علي بن أبي طالب","زيد بن حارثة","أبو بكر الصديق","عمر بن الخطاب","عثمان بن عفان"],a:2},
+{q:"إلى أين هاجر بعض الصحابة فرارًا من أذى قريش قبل الهجرة إلى المدينة؟",o:["اليمن","الحبشة","الشام","مصر","فارس"],a:1},
+{q:"من هو ملك الحبشة الذي آوى المهاجرين المسلمين؟",o:["قيصر","كسرى","النجاشي","المقوقس","هرقل"],a:2},
+{q:"بم سُمّي العام الذي توفيت فيه خديجة وأبو طالب؟",o:["عام الفيل","عام الحزن","عام الفتح","عام الوفود","عام الجماعة"],a:1},
+{q:"ما اسم الرحلة الليلية للنبي ﷺ من مكة إلى بيت المقدس ثم إلى السماوات؟",o:["الهجرة","الإسراء والمعراج","الفتح المبين","الغزوة الكبرى","بيعة العقبة"],a:1},
+{q:"ماذا فُرض على النبي ﷺ ليلة الإسراء والمعراج؟",o:["الصيام","الزكاة","الصلوات الخمس","الحج","الجهاد"],a:2},
+{q:"ما اسم البيعات التي تمّت بين النبي ﷺ ووفد أهل يثرب قبل الهجرة؟",o:["بيعة الرضوان","بيعتا العقبة","بيعة الحديبية","بيعة الفتح","بيعة الشجرة"],a:1},
+{q:"من رافق النبي ﷺ في هجرته من مكة إلى المدينة؟",o:["عمر بن الخطاب","عثمان بن عفان","أبو بكر الصديق","علي بن أبي طالب","حمزة بن عبدالمطلب"],a:2},
+{q:"في أي سنة ميلادية كانت الهجرة النبوية؟",o:["610م","620م","622م","630م","632م"],a:2},
+{q:"ما اسم الغار الذي اختبأ فيه النبي ﷺ وأبو بكر أثناء الهجرة؟",o:["غار حراء","غار ثور","غار في الطائف","غار في بدر","غار في أُحد"],a:1},
+{q:"ما أول ما بناه النبي ﷺ عند وصوله إلى المدينة؟",o:["سور المدينة","المسجد النبوي","بيته الخاص","السوق","الخندق"],a:1},
+{q:"بين من آخى النبي ﷺ في المدينة المنورة؟",o:["الأنصار وحدهم","قريش واليهود","المهاجرين والأنصار","الأوس والخزرج فقط","المسلمين والمشركين"],a:2},
+{q:"ما اسم الوثيقة التي نظّم بها النبي ﷺ العلاقة بين سكان المدينة؟",o:["ميثاق المدينة العام","وثيقة المدينة","عهد الحديبية","صحيفة قريش","ميثاق الأنصار"],a:1},
+{q:"في أي سنة هجرية فُتحت مكة المكرمة؟",o:["السنة 2 هـ","السنة 5 هـ","السنة 6 هـ","السنة 8 هـ","السنة 10 هـ"],a:3},
+{q:"ماذا قال النبي ﷺ لأهل مكة يوم الفتح عفوًا عنهم؟",o:["اذهبوا فأنتم الطلقاء","لا لوم عليكم اليوم","أنتم آمنون في بيوتكم","اذهبوا وأنتم أحرار","اذهبوا فقد غفر الله لكم"],a:0},
+{q:"في أي سنة هجرية أدّى النبي ﷺ حجة الوداع؟",o:["السنة 6 هـ","السنة 7 هـ","السنة 8 هـ","السنة 9 هـ","السنة 10 هـ"],a:4},
+{q:"متى توفي النبي محمد ﷺ؟",o:["1 محرم 10 هـ","12 ربيع الأول 11 هـ","27 رجب 11 هـ","10 ذو الحجة 10 هـ","1 رمضان 11 هـ"],a:1},
+{q:"أين دُفن النبي ﷺ؟",o:["في مكة المكرمة","في البقيع","في حجرة عائشة بالمدينة","في المسجد الأقصى","في غار حراء"],a:2},
+{q:"كم كان عمر النبي ﷺ حين توفي؟",o:["60 سنة","61 سنة","63 سنة","65 سنة","70 سنة"],a:2},
+{q:"ما أول غزوة كبرى فاصلة خاضها المسلمون؟",o:["أُحد","الخندق","بدر الكبرى","خيبر","حنين"],a:2},
+{q:"في أي سنة هجرية وقعت غزوة بدر الكبرى؟",o:["1 هـ","2 هـ","3 هـ","4 هـ","5 هـ"],a:1},
+{q:"من قاد جيش قريش المشرك في غزوة بدر؟",o:["أبو سفيان","أبو جهل","أبو لهب","عتبة بن ربيعة وحده","الوليد بن المغيرة"],a:1},
+{q:"كم كان عدد المسلمين تقريبًا في غزوة بدر؟",o:["حوالي 100","حوالي 313","حوالي 700","حوالي 1000","حوالي 3000"],a:1},
+{q:"في أي غزوة خالف بعض الرماة أمر النبي ﷺ فانقلب الموقف على المسلمين؟",o:["بدر","أُحد","الخندق","خيبر","حنين"],a:1},
+{q:"في أي سنة هجرية وقعت غزوة أُحد؟",o:["1 هـ","2 هـ","3 هـ","4 هـ","5 هـ"],a:2},
+{q:"من الصحابي الذي استُشهد في أُحد ولُقّب بـ«سيد الشهداء»؟",o:["حمزة بن عبدالمطلب","جعفر بن أبي طالب","زيد بن حارثة","مصعب بن عمير","سعد بن معاذ"],a:0},
+{q:"في أي غزوة حفر المسلمون خندقًا حول المدينة لصدّ الأحزاب؟",o:["بدر","أُحد","الخندق (الأحزاب)","خيبر","حنين"],a:2},
+{q:"من اقترح على النبي ﷺ حفر الخندق حول المدينة؟",o:["أبو بكر الصديق","عمر بن الخطاب","سلمان الفارسي","بلال بن رباح","علي بن أبي طالب"],a:2},
+{q:"في أي سنة هجرية وقعت غزوة الخندق؟",o:["3 هـ","4 هـ","5 هـ","6 هـ","7 هـ"],a:2},
+{q:"أي قبيلة يهودية حاصرها المسلمون بعد غزوة الخندق لنقضها العهد؟",o:["بنو النضير","بنو قينقاع","بنو قريظة","خيبر","بنو قيلة"],a:2},
+{q:"ما اسم الصلح الذي عُقد بين المسلمين وقريش سنة 6 هـ؟",o:["صلح الحديبية","صلح مكة","صلح المدينة","صلح خيبر","صلح الطائف"],a:0},
+{q:"وصف القرآن الكريم صلح الحديبية بأنه؟",o:["الفتح المبين","النصر الأكبر","الهدنة الكبرى","بداية الجهاد","نهاية القتال"],a:0},
+{q:"في أي غزوة فُتحت حصون اليهود الحصينة شمال المدينة سنة 7 هـ؟",o:["بدر","بني قريظة","خيبر","حنين","تبوك"],a:2},
+{q:"أي صحابي أظهر شجاعة بارزة في غزوة خيبر وأُعطي الراية؟",o:["أبو بكر الصديق","عمر بن الخطاب","علي بن أبي طالب","خالد بن الوليد","سعد بن أبي وقاص"],a:2},
+{q:"من كان قائد جيش المسلمين العام في فتح مكة؟",o:["أبو بكر الصديق","خالد بن الوليد","النبي ﷺ بنفسه","عمر بن الخطاب","سعد بن عبادة"],a:2},
+{q:"ما الغزوة التي وقعت مباشرة بعد فتح مكة ضد قبيلتي هوازن وثقيف؟",o:["حنين","تبوك","خيبر","بدر","الخندق"],a:0},
+{q:"في أي سنة هجرية وقعت غزوة حنين؟",o:["6 هـ","7 هـ","8 هـ","9 هـ","10 هـ"],a:2},
+{q:"ماذا حدث في بداية غزوة حنين قبل أن يثبت النبي ﷺ ويتحقق النصر؟",o:["انتصر المسلمون فورًا","فوجئوا بكمين ففرّ بعضهم لحظة","لم يقع قتال أصلًا","انسحب المسلمون بالكامل","استسلم العدو دون قتال"],a:1},
+{q:"ما آخر غزوة كبرى خرج فيها النبي ﷺ بنفسه ضد الروم؟",o:["خيبر","حنين","فتح مكة","تبوك","الأحزاب"],a:3},
+{q:"في أي سنة هجرية وقعت غزوة تبوك؟",o:["7 هـ","8 هـ","9 هـ","10 هـ","11 هـ"],a:2},
+{q:"هل وقع قتال فعلي بين المسلمين والروم في غزوة تبوك؟",o:["نعم، معركة كبرى","نعم، معركة صغيرة فقط","لا، لم يقع قتال فعلي","نعم، استمرت أيامًا","لا يوجد معلومات مؤكدة"],a:2},
+{q:"ما الفرق بين الغزوة والسرية في السيرة النبوية؟",o:["لا فرق بينهما","الغزوة خرج فيها النبي ﷺ بنفسه والسرية بعث بها جيشًا دون أن يخرج","السرية أكبر من الغزوة دائمًا","الغزوة فقط في مكة والسرية في المدينة","السرية للدفاع والغزوة للهجوم فقط"],a:1},
+{q:"كم يُقارب عدد غزوات النبي ﷺ الإجمالي (التي خرج فيها بنفسه)؟",o:["9 غزوات","15 غزوة","نحو 27 غزوة","40 غزوة","60 غزوة"],a:2},
+{q:"في كم غزوة تقريبًا خاض النبي ﷺ قتالًا فعليًا؟",o:["3 غزوات","6 غزوات","9 غزوات","20 غزوة","27 غزوة"],a:2},
+{q:"أي سورة قرآنية سُميت باسم إحدى الغزوات الكبرى مباشرة؟",o:["الأحزاب","بدر","حنين","تبوك","خيبر"],a:0},
+{q:"بماذا وصف القرآن الكريم خُلق النبي ﷺ في سورة القلم؟",o:["بأنه رحيم فقط","بأنه على خلق عظيم","بأنه صابر فقط","بأنه حليم فقط","بأنه كريم فقط"],a:1},
+{q:"في أي سورة وردت آية «وإنك لعلى خلق عظيم»؟",o:["القلم","الأحزاب","التوبة","الفتح","النجم"],a:0},
+{q:"ما الصفة التي لُقّب بها النبي ﷺ قبل البعثة بسبب صدقه وأمانته؟",o:["الحكيم","الصادق الأمين","العادل","الرحيم","الكريم"],a:1},
+{q:"كيف تعامل النبي ﷺ مع أهل مكة يوم الفتح رغم إيذائهم له سنوات طويلة؟",o:["عاقبهم جميعًا","نفاهم من مكة","عفا عنهم وقال اذهبوا فأنتم الطلقاء","أخذ أموالهم","سجن كبراءهم"],a:2},
+{q:"بم وصفت السيدة عائشة رضي الله عنها خُلق النبي ﷺ؟",o:["كان خلقه شديدًا","كان خلقه القرآن","كان خلقه كخلق الملوك","لم تصفه","كان خلقه متقلبًا"],a:1},
+{q:"ما موقف النبي ﷺ عمومًا من اليتامى والضعفاء؟",o:["كان يتجنبهم","كان يرحمهم ويوصي بهم","لم يهتم بهم","كان يفضّل الأغنياء","لم يرد ذكر لذلك"],a:1},
+{q:"كيف كان النبي ﷺ في تعامله مع خدمه وفق الروايات؟",o:["كان يعاقبهم كثيرًا","كان رحيمًا رفيقًا معهم","كان لا يتحدث إليهم","كان يفرّق بينهم","لم يكن له خدم"],a:1},
+{q:"ما معنى صفة «الحلم» التي عُرف بها النبي ﷺ؟",o:["الغضب السريع","تحمّل الأذى وعدم الغضب لنفسه","الصمت الدائم","القسوة في الحكم","الانفعال عند الخطأ"],a:1},
+{q:"كيف كان النبي ﷺ في تعامله مع زوجاته؟",o:["بالشدة والحزم دائمًا","بالرفق واللين وحسن العشرة","بالتجاهل غالبًا","بالتفرقة بينهن في المعاملة","لم يرد وصف لذلك"],a:1},
+{q:"ما موقف الإسلام عمومًا، كما دعا إليه النبي ﷺ، تجاه الحيوان؟",o:["إباحة تعذيبه","الرفق به والنهي عن تعذيبه","عدم الاهتمام به","تحريم الانتفاع به مطلقًا","لا يوجد توجيه بذلك"],a:1},
+{q:"كيف كان تعامل النبي ﷺ مع الفقراء والمساكين؟",o:["كان يتجنب مجالستهم","كان يجلس معهم بتواضع ويشاركهم","كان يرسل غيره إليهم فقط","كان يتكبر عليهم","لا يوجد ذكر لذلك"],a:1},
+{q:"من مظاهر تواضع النبي ﷺ رغم مكانته العظيمة؟",o:["كان له خدم كثر لكل شيء","كان يخصف نعله ويخدم نفسه وأهله","كان يجلس في مجلس خاص دائمًا","كان يرفض مجالسة الفقراء","لا توجد مظاهر معروفة"],a:1},
+{q:"كيف استقبل النبي ﷺ إساءة أهل الطائف حين رجموه؟",o:["دعا عليهم بالهلاك فورًا","دعا لهم بالهداية ولم يدع عليهم","تركهم وانتقم منهم لاحقًا","استعان بجيش لمعاقبتهم","لم يتأثر بالأمر إطلاقًا"],a:1},
+{q:"ماذا عرض المَلَك على النبي ﷺ بعد أذى أهل الطائف، فرفضه النبي؟",o:["أن يدعو لهم بالمطر","أن يُطبق عليهم الأخشبين (الجبلين)","أن يمنحهم مالًا","أن يبعث إليهم جيشًا","أن ينفيهم من الطائف"],a:1},
+{q:"ما موقف النبي ﷺ في العدل حتى مع أقرب الناس إليه؟",o:["كان يُحابي أهل بيته دائمًا","قال لو سرقت فاطمة بنت محمد لقطعت يدها","كان يُعفي أقاربه من الحدود","لم يطبّق العدل على أقاربه","لا يوجد موقف مسجل بهذا الخصوص"],a:1},
+{q:"كيف عُرف النبي ﷺ في وفائه بالعهود؟",o:["كان ينقض العهود عند الحاجة","عُرف بالوفاء التام حتى مع غير المسلمين","لم يلتزم بالعهود في الحرب","كان يتردد كثيرًا في الوفاء","لا توجد شواهد على ذلك"],a:1},
+{q:"بم عُرف النبي ﷺ في صفة الكرم والجود؟",o:["كان يبخل على أصحابه","كان أجود الناس بالخير وأكثر جودًا في رمضان","كان يجمع المال ولا ينفقه","لم يكن معروفًا بالكرم","كان كريمًا مع أقاربه فقط"],a:1},
+{q:"كيف كان صبر النبي ﷺ في مواجهة أذى قريش الطويل؟",o:["ردّ الأذى بأذى مثله فورًا","صبر سنوات طويلة دون رد الأذى بالمثل","استسلم لأذاهم وترك الدعوة","انتقم منهم بمجرد أن قوي","لم يتعرض لأذى يُذكر"],a:1},
+{q:"كيف تعامل النبي ﷺ مع عبدالله بن أم مكتوم الأعمى بعد نزول سورة عبس؟",o:["تجاهله كما كان","أكرمه وقرّبه واستخلفه على المدينة أحيانًا","أبعده عن مجالسه","لم يتغير تعامله معه","لا توجد روايات عن ذلك"],a:1},
+{q:"كيف كان النبي ﷺ في بيته مع أهله وفق وصف عائشة رضي الله عنها؟",o:["كان يجلس دون عمل ينتظر الخدمة","كان يخدم نفسه ويساعد في أعمال البيت","كان يمنع أهله من العمل","كان يخرج من البيت طوال الوقت","لم يرد وصف لحياته المنزلية"],a:1},
+{q:"ما صفة «الزهد» التي عُرف بها النبي ﷺ رغم قدرته على الترف؟",o:["جمع الأموال والادخار","الزهد في الدنيا وعدم التعلق بمتاعها","طلب الهدايا الكثيرة","بناء القصور الفخمة","الانشغال بالتجارة الواسعة"],a:1},
+{q:"كيف تعامل النبي ﷺ مع الأعرابي الذي أساء الأدب في المسجد؟",o:["طرده وعاقبه فورًا بشدة","عامله بالرفق والحكمة دون غضب","تجاهله تمامًا","أمر بحبسه","لم يقع مثل هذا الموقف"],a:1},
+{q:"كيف كانت شجاعة النبي ﷺ في المعارك الحرجة كغزوة حنين؟",o:["انسحب من أرض المعركة","ثبت في أرض المعركة حين تفرق كثير من الناس","ترك القيادة لغيره","اختبأ حتى انتهاء القتال","لم يشارك في القتال إطلاقًا"],a:1},
+{q:"كيف وصف علي بن أبي طالب رضي الله عنه شجاعة النبي ﷺ في المعارك؟",o:["كان يتأخر عن ساحة القتال","كنا إذا اشتد البأس نحتمي برسول الله ﷺ","كان يكتفي بالمشاهدة من بعيد","لم يصفه بالشجاعة","كان يفوّض القيادة دائمًا لغيره"],a:1},
+{q:"بأي معنى جامع وصف النبي ﷺ رسالته الأخلاقية بقوله المشهور؟",o:["إنما بعثت لأجمع الأموال","إنما بعثت لأتمم مكارم الأخلاق","إنما بعثت لأقيم الدولة فقط","إنما بعثت للجهاد فقط","إنما بعثت لأتحدث بالفصاحة"],a:1},
+];
+
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = [];
+let quizOrder = [];
+
+function shuffleArray(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function renderQuizStart(){
+  const wrap = document.getElementById('quizWrap');
+  wrap.innerHTML = `
+    <div class="quiz-card quiz-start">
+      <h3>اختبر معلوماتك 📝</h3>
+      <p>101 سؤال من اختيار متعدد (5 اختيارات لكل سؤال) حول القرآن الكريم والسيرة النبوية والغزوات وأخلاق الرسول ﷺ. تُعرض الأسئلة بترتيب عشوائي، وتحصل على نتيجتك في النهاية.</p>
+      <button class="quiz-btn primary" id="startQuizBtn">ابدأ الاختبار</button>
+    </div>`;
+  document.getElementById('startQuizBtn').addEventListener('click', startQuiz);
+}
+
+function startQuiz(){
+  quizIndex = 0;
+  quizScore = 0;
+  quizAnswered = [];
+  quizOrder = shuffleArray(QUIZ.map((_,i)=>i));
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  const wrap = document.getElementById('quizWrap');
+  const total = quizOrder.length;
+  const qIdx = quizOrder[quizIndex];
+  const item = QUIZ[qIdx];
+  const letters = ['أ','ب','ج','د','هـ'];
+  const optOrder = shuffleArray(item.o.map((_,i)=>i));
+
+  wrap.innerHTML = `
+    <div class="quiz-bar">
+      <span>السؤال ${quizIndex+1} من ${total}</span>
+      <div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:${(quizIndex/total)*100}%"></div></div>
+      <span class="quiz-score">النقاط: ${quizScore}</span>
+    </div>
+    <div class="quiz-card">
+      <div class="quiz-q-num">سؤال رقم ${quizIndex+1}</div>
+      <div class="quiz-q-text">${item.q}</div>
+      <div class="quiz-options" id="quizOptions">
+        ${optOrder.map((oi,pos)=>`<div class="quiz-opt" data-oi="${oi}"><span class="letter">${letters[pos]}</span><span>${item.o[oi]}</span></div>`).join('')}
+      </div>
+      <div class="quiz-nav">
+        <button class="quiz-btn" id="quitQuizBtn">إنهاء الاختبار</button>
+        <button class="quiz-btn primary" id="nextQuizBtn" disabled>${quizIndex+1===total?'عرض النتيجة':'السؤال التالي'}</button>
+      </div>
+    </div>`;
+
+  let answered = false;
+  document.querySelectorAll('#quizOptions .quiz-opt').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      if(answered) return;
+      answered = true;
+      const chosen = parseInt(el.dataset.oi);
+      const correct = item.a;
+      document.querySelectorAll('#quizOptions .quiz-opt').forEach(o=>o.classList.add('disabled'));
+      el.classList.add(chosen===correct ? 'correct' : 'wrong');
+      if(chosen!==correct){
+        document.querySelector(`#quizOptions .quiz-opt[data-oi="${correct}"]`).classList.add('correct');
+      } else {
+        quizScore++;
+      }
+      quizAnswered.push({q:qIdx, correct: chosen===correct});
+      document.getElementById('nextQuizBtn').disabled = false;
+      document.querySelector('.quiz-score').textContent = `النقاط: ${quizScore}`;
+    });
+  });
+
+  document.getElementById('nextQuizBtn').addEventListener('click', ()=>{
+    if(quizIndex+1 < total){
+      quizIndex++;
+      renderQuizQuestion();
+    } else {
+      renderQuizResult();
+    }
+  });
+  document.getElementById('quitQuizBtn').addEventListener('click', renderQuizResult);
+}
+
+function renderQuizResult(){
+  const wrap = document.getElementById('quizWrap');
+  const total = quizAnswered.length;
+  const pct = total ? Math.round((quizScore/total)*100) : 0;
+  let msg = "بداية جيدة، واصل التعلم عن سيرة النبي ﷺ وأخلاقه!";
+  if(pct>=90) msg = "ممتاز جدًا! معرفة رائعة بالسيرة والقرآن الكريم.";
+  else if(pct>=70) msg = "أحسنت! نتيجة قوية تدل على اطلاع جيد.";
+  else if(pct>=50) msg = "جيد، ولا يزال هناك مجال لمزيد من المراجعة.";
+
+  wrap.innerHTML = `
+    <div class="quiz-card quiz-result">
+      <div class="big-score">${quizScore} / ${total}</div>
+      <p>نسبة الإجابات الصحيحة: ${pct}%</p>
+      <p>${msg}</p>
+      <button class="quiz-btn primary" id="restartQuizBtn" style="margin-top:14px;">إعادة الاختبار</button>
+    </div>`;
+  document.getElementById('restartQuizBtn').addEventListener('click', startQuiz);
+}
+
+renderQuizStart();
+</script>
+</body>
+</html>
